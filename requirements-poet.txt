@@ -1,0 +1,12 @@
+# Optional original PoET runtime versions; install in a dedicated Python 3.10 venv.
+# Choose an appropriate official PyTorch wheel for your platform separately if needed.
+-r requirements-classical.txt
+torch==2.6.0
+mediapipe==0.10.21
+opencv-contrib-python==4.11.0.86
+protobuf==4.25.8
+pandas==2.2.3
+matplotlib==3.10.1
+jax==0.4.35
+jaxlib==0.4.35
+requests==2.32.5

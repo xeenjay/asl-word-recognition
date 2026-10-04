@@ -1,0 +1,18 @@
+{
+  "commit": "dca74c30d9d604cb3b92de8fc73ce91484644259",
+  "archive_sha256": "c0259422892a80b867084a9d9c18e0f4e72371758cf8f1ac58ae703de5fa6666",
+  "files": {
+    ".gitignore": "a5a2b6a3fe3edfb8f47a8d220879a018de34a7a6e64770a450b9dbf5ca2b08a5",
+    "README.md": "25ddac289c884b57a5c765866b85e1b0829f9a359538ce6e87d695728b772773",
+    "data.py": "1f36da984c4c772c2f5f43057b5fd629c8571c4b29939765c0e6f2ebe9273fb7",
+    "data_utils.py": "63c917ed1ed002a8ccca0c38933ea3772c9a3d2f33a6a16c3abc3cf13fe6407a",
+    "dataset.py": "391d99a2cfd188802cc2a0ad86dcafac22b0073c504586e1df9dfcbe6c8adde7",
+    "inference.py": "14638e8da7ea79289ebbe9a3b88ca791db91e44f52e9978d0310cf0213ab40e5",
+    "mediapipe_extraction.py": "1e74311b2a27db6e13bb519f696635985d3a6c7f79b9c105c118704a7f985e04",
+    "metrics.py": "91899f0f9f306fab587fec5dc266a30f06524c41cd9b3cd83e7f5048bc739856",
+    "model.py": "c464b3512fdd4e464b818df8339fb1918f728c28ca17f24546abfd7f68a6009c",
+    "protobuf_to_dict.py": "6a3bcce6f6ed35fc8a61c1b59f120ffe9681d688d05e3dd818423dda9aa244c2",
+    "training.py": "db0285e45a6451e96e0f64dd831c4551ecae5e2184c79207c7bd3744071f3410",
+    "training_utils.py": "5a763ff7e6273d2c306cb1721ab13ba57b49fda512eab77fee96f95a61b53ae0"
+  }
+}

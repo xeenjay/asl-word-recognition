@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "registered_before_retrieval_scores": true,
+  "test_used": false,
+  "manual_annotation": false,
+  "optimizer_steps": 0,
+  "sweeps_authorized": false,
+  "methods": [
+    "original",
+    "pure_memory",
+    "fixed_blend"
+  ],
+  "primary_method": "fixed_blend",
+  "retrieval": {
+    "l2_normalize": true,
+    "min_embedding_norm": 1e-12,
+    "cosine_clip": [
+      -1.0,
+      1.0
+    ],
+    "kernel": "exp(-beta*(1-cosine))",
+    "beta": 10.0,
+    "aggregation": "mean of per-signer mean kernels within each class",
+    "memory_order": "canonical ascending video_sha256",
+    "candidate_count": 5,
+    "candidates": "unchanged original 2731-way model top5; never insert target",
+    "memory_probabilities": "normalize five positive class scores to sum1",
+    "base_probabilities": "stable softmax of original top5 logits",
+    "blend_memory_weight": 0.25,
+    "blend_base_weight": 0.75,
+    "ties": "preserve original PoET top5 rank",
+    "math_dtype": "float64"
+  },
+  "continuation_signal": {
+    "primary_top1_gain_percentage_points": 0.5,
+    "minimum_net_correct": 52,
+    "macro_top1_strictly_better": true,
+    "same_top5_set_and_hit_every_sample": true,
+    "zero_failed_required": true,
+    "meaning": "engineering worth-considering signal, not significance",
+    "auto_learned_reranker": false,
+    "auto_full_training": false
+  },
+  "fixture_only": true,
+  "note": "Synthetic protocol-validation fixture; not a preregistration or authorization of any real experiment.",
+  "model": {
+    "checkpoint_sha256": "5511f1270bd252c586705da8233f7ca1caf0b079a8ddf498b5bb0606f5e6d5c0",
+    "frozen": true
+  },
+  "data": {
+    "train_count": 40154,
+    "val_count": 10304,
+    "classes": 2731,
+    "memory_split": "train",
+    "query_split": "val",
+    "drop_samples": false
+  }
+}

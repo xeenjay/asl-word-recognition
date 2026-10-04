@@ -1,0 +1,6 @@
+# CPU learning example and classical classifier tests; Python 3.10 recommended.
+numpy==1.26.4
+scipy==1.15.2
+scikit-learn==1.6.1
+joblib==1.4.2
+threadpoolctl==3.5.0

@@ -1,0 +1,7 @@
+method_a,method_b,count,both_correct,only_a_correct,only_b_correct,both_incorrect,either_correct,source_id
+knn,linear_svm,10304,1278,647,2716,5663,4641,classical_comparison
+knn,random_forest,10304,608,1317,1073,7306,2998,classical_comparison
+knn,poet_official_v2,10304,1748,177,6592,1787,8517,classical_comparison
+linear_svm,random_forest,10304,1087,2907,594,5716,4588,classical_comparison
+linear_svm,poet_official_v2,10304,3637,357,4703,1607,8697,classical_comparison
+random_forest,poet_official_v2,10304,1524,157,6816,1807,8497,classical_comparison

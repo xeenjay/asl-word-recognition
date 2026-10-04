@@ -1,0 +1,2 @@
+# Default setup: CPU classical methods, no PoET assets.
+-r requirements-classical.txt
