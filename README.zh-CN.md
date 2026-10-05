@@ -1,59 +1,72 @@
-# ASL 词级识别：传统方法与 PoET
+# ASL 词级识别 — 团队工作区
 
-[English](README.md) · [环境与资产准备](docs/SETUP.md) · [代码导航](docs/CODE_MAP.md) · [方法说明](docs/METHODS.md) · [结果说明](docs/RESULTS.md) · [团队协作](docs/TEAM_GUIDE.md)
+[English](README.md) · [环境与运行](docs/SETUP.md) · [方法](docs/METHODS.md) · [代码导航](docs/CODE_MAP.md) · [结果](docs/RESULTS.md) · [协作](docs/TEAM_GUIDE.md)
 
-本仓库用于四人团队学习、理解和复现 ASL Citizen 上的**孤立词识别**项目：输入一段已经剪好的单词手语视频，输出 2,731 个类别中的一个词标签。它不负责从连续手语中找词边界，也不是把自然对话翻译成英文句子。
+这个仓库让组员按 **跑真实数据参考实现 → 理解方法 → 修改学生代码 → 运行并比较结果** 的顺序工作。任务是“一段已经剪好的单词手语视频 → 一个词标签”，不做连续句子翻译。
 
-我们研究三个问题：
+可编辑的三个方法是 **kNN、Linear SVM、Random Forest**，共享 1,020 维姿态/运动特征。还写不出来时可以先用 reference；默认 `students/` 模板也委托 reference，运行记录会明确标记，不能把未修改模板记为独立实现。
 
-1. 给定相同的固定姿态/运动特征，kNN、Linear SVM 和受限 Random Forest 表现如何？
-2. 这些系统与使用预训练权重的轻量时序模型 PoET 相比有什么差异？
-3. 在 PoET 内部，用匹配的初始化、seed 和训练预算比较时，相对几何和检索重排能否带来小幅改进？
+## 开始运行
 
-## 推荐阅读顺序
+先接受私有仓库邀请，用自己的 GitHub 账号认证。也可以登录网页后 **Code → Download ZIP**，解压并进入项目目录运行。
 
-先读本页，再读英文 [Methods](docs/METHODS.md) 和 [Team guide](docs/TEAM_GUIDE.md)。阅读 [英文报告](reports/report-en.md) 了解完整分析，也可用 [中文报告](reports/report-zh.md) 核对。本仓库提供报告文字和纯统计图；原视频、人物帧、PDF/PPTX 交付稿及开箱即用的 demo 不随仓库分发。需要看实现时，先用 [代码导航](docs/CODE_MAP.md) 找入口，再按 [Setup](docs/SETUP.md) 准备环境和运行已支持的检查。[Results](docs/RESULTS.md) 解释导出的结果证据，[Status](docs/STATUS.md) 区分已完成与待完成。
+```bash
+git clone https://github.com/huiliyi-XJ/asl-word-recognition.git
+cd asl-word-recognition
+python3.10 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements-data.txt
+```
 
-**clone 不等于完整推理环境已经准备好。** 原视频、pose 缓存、模型权重和第三方 vendor 源码都不放进 Git。部分脚本依赖原研究工作区中的资产及其版本/校验记录；不要在不了解输入条件时直接运行任意脚本。准确的安装与运行方式以 Setup 为准；[第三方来源](docs/THIRD_PARTY.md) 说明上游软件与固定版本。
+使用 Python 3.10 或 3.11，环境细节见 [Setup](docs/SETUP.md)。
 
-## 数据与方法
+先自行阅读 [ASL Citizen 数据许可](https://www.microsoft.com/en-us/research/project/asl-citizen/dataset-license/)。接受条款后，准备真实小样本：
 
-ASL Citizen 共 83,399 条视频、2,731 类、52 位 signer。官方划分按 signer 分离：
+```bash
+python scripts/prepare_team_data.py --accept-dataset-license
+```
 
-| 划分 | 视频数 | signer 数 | 用途 |
-| --- | ---: | ---: | --- |
-| train | 40,154 | 35 | 拟合模型、估计统计量、建立检索库 |
-| validation | 10,304 | 6 | 开发、选模型及当前全部实验分数 |
-| test | 32,941 | 11 | 保留，尚无最终评价结果 |
+脚本从官方来源直接获取元数据和 **最多 80 条选定视频**，再在本地提取数字特征：按 gloss 排序的前 10 类，每类最多 train 6 条、validation 2 条，不足时保留该组所有可用样本；各类各 split 内按文件名 hash 确定样本，保留官方划分。
 
-使用已有标签和 MediaPipe 自动提取的关键点，不新增人工标注。标准化只在 train 上拟合，失败或难例不从评价分母中删除。数据应从官方来源按其条款获取，本仓库不重新分发原数据。
+Git 和 GitHub Release 不重新分发数据/特征包。首次需要联网下载和 CPU 提取，后续方法运行复用 `data/classical-mini/`。**不需要每位同学先下载约 31 GB 全量 train/validation 视频**，也不需要 GPU、PoET 权重或 vendor 源码。
 
-传统三方法共享一个 **1,020 维描述符**：归一化手形/身体/手腕坐标，整段及时间分段统计，运动差分和有效检测比例。它保留粗粒度顺序，但压缩了详细轨迹。
+先跑参考实现：
 
-- **kNN**：在标准化并 L2 归一化的特征上做 cosine 搜索，五个邻居等权投票。
-- **Linear SVM**：用 scikit-learn 拟合 2,731 个 one-versus-rest 线性分类器。
-- **受限 Random Forest**：用 scikit-learn 训练 64 棵树，限制深度和叶数以控制大词表下的复杂度。
-- **PoET**：直接接收关键点序列，用轻量 Transformer 建模时间关系。
-- **PoET + G + R**：几何支路补充手腕相对脸、身体和另一只手的关系；检索只在模型原来的 Top-5 类别内重排。
+```bash
+python run.py --method knn --implementation reference --data data/classical-mini --output outputs/knn-reference
+```
 
-最后一项是 PoET 的变体，所以 demo 可以显示五路输出，而项目基础比较仍是四类方法。SVM/RF 使用成熟库，kNN 是项目实现的标准搜索和投票，PoET/MediaPipe 是已有方法；项目贡献在于适配、特征和支路、统一评价、受控对照及结果解释。
+修改 `students/knn.py`，再运行：
 
-## 当前结果如何理解
+```bash
+python run.py --method knn --implementation student --data data/classical-mini --output outputs/knn-student
+```
 
-同一完整 validation 上，Top-1 为：kNN **18.6821%**、SVM **38.7616%**、受限 RF **16.3141%**、官方 PoET **80.9394%**。
+SVM/RF 分别把 `knn` 换成 `linear_svm` / `random_forest`，编辑对应文件。默认使用 `configs/<method>.json`，也可用 `--config` 指定设置。直接比较实现时保持数据和参数一致。
 
-三 seed 的匹配 PoET 实验中，微调 baseline B 为 **81.1853%**，B+R 为 **81.5217%**，G 为 **81.4732%**，G+R 为 **81.7352%**。组合平均提升约 **0.55 个百分点**，同时也会把部分原本正确的样本改错。这个 B 是进一步微调后的对照，不是前面的官方原始 checkpoint。
+每次必须用**新的输出目录**。比较 `metrics.json`、`per_class.json` 和预测文件；`run.json` 记录代码来源及是否委托 reference。原样运行模板只是使用接口，不是已经自己写完算法。
 
-传统方法与 PoET 的输入、预训练及训练历史不同，因此第一组是**完整系统比较**，不能只凭分数证明某种分类器架构更好。PoET 内部对照更受控，但 validation 已反复用于开发；三 seed 不能把它变成独立 test，也不能据此声称显著泛化提升。论文里的 test 分数同样不能直接与本项目 validation 排名。
+## 修改代码前要知道
 
-## 已有工作与剩余工作
+运行器只在 train 上拟合 StandardScaler，再把已标准化的 X 交给学生方法。不要在 validation 上重新拟合，也不要删掉难例。接口说明在 [Team guide](docs/TEAM_GUIDE.md)，代码位置在 [Code map](docs/CODE_MAP.md)。
 
-原研究工作区已完成 train/validation 准备、三传统基线、官方 PoET、几何/检索消融、多项负结果记录、错误分析与统一视频 demo。原工作区还有 proposal、midpoint、slides、中英讲稿等材料。本仓库侧重可学习代码、完整报告文字、纯统计分析和 [AI 使用记录](docs/AI_USE_AND_CONTRIBUTIONS.md)，不是原工作区全部材料和运行资产的镜像。
+这个 10 类 mini 是**小规模流程验收和编程练习**，不能可靠估计完整任务效果，也不能直接和历史 2,731 类分数比较。
 
-仍需完成：冻结方案后准备与评价最终 test、统一硬件/协议下的成本比较、队友各自实际工作及贡献记录、全组对最终材料的审阅。个人 Paper Review 是单独作业，报告引用列表不能代替它。
+历史完整实验为 40,154 train / 10,304 validation：kNN **18.6821%**、SVM **38.7616%**、受限 RF **16.3141%**、官方 PoET **80.9394%**。PoET 的输入和预训练不同，因此这是完整系统比较。
 
-团队成员为 Xinjie Huang、Duncan Stadler、Leyun Kim、Ming Chen。Xinjie 在 agent 协助下先行组织了工程和 PoET 研究；其余成员的具体方法与实际贡献不能由现成参考代码自动推定。请按 [Team guide](docs/TEAM_GUIDE.md) 记录实际代码、实验、分析、写作与 AI 协助，并能解释本人负责的内容。
+PoET 内部三 seed 对照另列：微调 B **81.1853%** → G+R **81.7352%**，约 **+0.55 个百分点**。B 与官方原始 checkpoint 不同；这些全是 validation，32,941 条最终 test 尚未评价。
 
-请勿提交数据载荷、权重、密钥、连接信息或项目无关的私人课程记录。新的训练或最终 test 应先共同确定明确方案；学习仓库不自动启动实验。
+便携提取使用 MediaPipe model complexity 1 和全部解码帧；历史实验使用 complexity 2 及其记录的预处理协议。虽然描述符都是 1,020 维，特征数值不保证相同，因此新全量运行也不能承诺精确复现历史分数。
 
-版本：2026-10-04。英文主入口和各专题文档提供更多细节。
+全量数据准备需要显式选择，见 [Setup](docs/SETUP.md)：约 31 GB 原视频及额外处理/存储。教学 runner 默认单 worker 并限制数值库线程，全量 SVM 有 2,731 个二元拟合任务，CPU 耗时和内存不能按历史并行 run 猜测。先用 mini。
+
+## 阅读与团队协作
+
+- 特征和算法：[Methods](docs/METHODS.md)。
+- 完整分析：[英文报告](reports/report-en.md)、[中文报告](reports/report-zh.md)、[Results](docs/RESULTS.md)。
+- 已完成、待完成及验收：[Status](docs/STATUS.md)。
+- 记录本人实际工作：[Team guide](docs/TEAM_GUIDE.md)、[AI 使用记录](docs/AI_USE_AND_CONTRIBUTIONS.md)。
+
+团队为 Xinjie Huang、Duncan Stadler、Leyun Kim、Ming Chen；本页不指定各人方法。Xinjie 在 agent 协助下组织初始研究，参考代码不能自动算作某位队友已完成的贡献。使用成熟库/参考实现应如实注明，再记录自己的实现、实验、分析和写作。
+
+仓库包含文字报告与统计图，不提交人物视频/帧、权重、完整缓存、PDF/PPTX、密钥或私人机器信息。PoET 完整复现仍需独立资产与实验协议，不是当前教学入口的一键功能。

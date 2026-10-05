@@ -1,0 +1,4 @@
+{
+  "method": "knn",
+  "parameters": {"n_neighbors": 5}
+}

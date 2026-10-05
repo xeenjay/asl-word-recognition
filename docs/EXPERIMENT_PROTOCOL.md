@@ -2,6 +2,37 @@
 
 This document separates the protocol used for the existing results from requirements for any future team experiment. Reading this repository does not launch training, download data, or evaluate test.
 
+## Team development workflow
+
+`prepare_team_data.py` creates each user's own local inputs from the official
+source or their existing personal copy. Read and accept the dataset's terms
+before downloading. Real videos, derived arrays, and local selection records
+stay out of Git and release assets; see [Data provenance](DATA_PROVENANCE.md).
+
+The default mini exercise contains ten fixed glosses, 60 training clips and 20
+validation clips from their official signer-disjoint partitions. Class selection
+and within-class filename-hash selection do not consult model predictions. The
+portable MediaPipe extractor uses complexity 1, whereas the historical research
+extractor used complexity 2. The 1,020-dimensional descriptor formula is shared;
+the raw landmarks and resulting scores need not match. Neither mini accuracy nor
+a new full run from this extractor is a reproduction of the historical table by
+default. Always preserve the recorded extractor, vocabulary and data hashes.
+
+Use `run.py` for one method at a time. `--implementation reference` uses the
+shared reference code. `--implementation student` uses that method's file under
+`students/`. The initial student files explicitly delegate to the reference;
+they become a student's contribution only through actual understanding and
+documented work. Custom-code errors stop the run instead of silently switching
+to the reference. The runner fits standardization on training data only and
+keeps validation labels outside the student's fit function.
+
+Create a new output directory for each attempt. Results record the requested and
+effective implementation, method settings, data and code hashes, environment,
+full validation denominator, timings, predictions, and a model reload check.
+Record changes and AI assistance in the team contribution log. Start with a
+small, explainable comparison; running the full profile is an explicit separate
+choice with a much larger preparation and training cost.
+
 ## Task, data, and split discipline
 
 The task is isolated-word classification on ASL Citizen: one presegmented clip maps to one of 2,731 word labels. It does not include continuous sentence translation, temporal word-boundary detection, or a claim of real-time camera operation.

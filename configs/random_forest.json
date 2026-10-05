@@ -1,0 +1,5 @@
+{
+  "method": "random_forest",
+  "parameters": {"n_estimators": 64, "max_depth": 12, "max_leaf_nodes": 256,
+    "min_samples_leaf": 2, "max_features": "sqrt", "n_jobs": 1, "random_state": 20261002}
+}

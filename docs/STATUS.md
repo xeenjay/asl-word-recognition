@@ -1,65 +1,67 @@
-# Project status
+# Current status
 
-[Home](../README.md) · [Results](RESULTS.md) · [Setup](SETUP.md) · [Team guide](TEAM_GUIDE.md)
+[Home](../README.md) · [Setup](SETUP.md) · [Data provenance](DATA_PROVENANCE.md) · [Research results](RESULTS.md)
 
-Snapshot: **October 4, 2026**. This document describes the completed research and its remaining boundaries. The portable learning repository has a narrower set of files than the original research workspace. Use [Setup](SETUP.md) for the checks supported by this checkout; a completed original experiment is not proof that all its external assets are present here.
+Snapshot: **October 4, 2026**. The current collaboration task is a real-data classical reference → student implementation → saved-results comparison workflow. It is separate from the archived full research experiments.
 
-## Confirmed scope
+## Team workflow and assets
 
-- Isolated ASL Citizen recognition: one trimmed sign clip → one of 2,731 labels.
-- Comparison of kNN, Linear SVM, bounded Random Forest, and PoET, plus controlled PoET geometry/retrieval ablations.
-- No new manual labels. Continuous sentence translation is outside scope.
-- Four confirmed members: Xinjie Huang, Duncan Stadler, Leyun Kim, and Ming Chen. Other members' exact method ownership and completed contributions remain to be consolidated.
-
-## Completed in the research workspace
-
-| Area | Completed evidence and output |
+| Component | Scope |
 | --- | --- |
-| Data | All 40,154 training and 10,304 validation videos and their pose records prepared; official split identities retained |
-| Classical systems | Shared 1,020-D features; kNN, SVM, bounded RF fitting/bank creation; full validation predictions, reload checks, and metric verification |
-| PoET | Official checkpoint deployment, matched fine-tuning, relative geometry, retrieval, three-seed component comparison |
-| Broader investigation | Attribute, cross-signer, extended-training, and RGB findings retained, including negative and small-gain results |
-| Analysis | Complete validation comparison; paired ablations; error overlap and descriptive slices; representative successes and failures |
-| Demonstration | One clip extraction shared across the three classical methods, official PoET, and fixed-seed G+R; saved examples distinguished from fresh inference |
-| Written materials | Revised full proposal, report, progress snapshot, slides, speaker notes, and AI/contribution record |
+| Local data preparation | `prepare_team_data.py` obtains official metadata/selected clips and extracts features after explicit dataset-license acceptance |
+| Default mini | 10 sorted-gloss labels; deterministic selection of up to 6 train + 2 validation clips per label; at most 80 real clips |
+| Method runner | `run.py` selects reference/student kNN, Linear SVM, or Random Forest |
+| Student code | `students/<method>.py`; initial templates delegate to reference and record that provenance |
+| Configuration | `configs/<method>.json`; common preprocessing is fitted on train only |
+| Data distribution | No videos or derived feature packs in Git/Release; each user obtains selected inputs from the official source |
+| Full preparation | Explicit `--profile full`; complete train/validation only, approximately 31 GB of video plus processing outputs/overhead |
+| Acceptance | Fresh environment, official download components, real 80-clip extraction, six classifier runs, and cache reuse verified; scope below |
 
-The original analysis gallery contains 16 deterministically selected videos and 48 frames. They are illustrative cases, not a randomly sampled accuracy estimate, and those videos and frames showing people are not distributed here. The original demo's functional checks do not establish that its service is currently running or available from this repository.
+Cloning or downloading the ZIP supplies code, not the data. After dependency installation and the user's own acceptance of the dataset terms, mini preparation is the small real-data entry point. Later classifier runs reuse local arrays and do not need to redownload videos. This flow needs no PoET weights, vendor source, or GPU.
 
-## Result boundaries
+The mini is a small pipeline check and programming exercise. With at most 60 train and 20 validation examples, its accuracy is not a reliable full-benchmark estimate. It must not be compared with the historical 2,731-class scores.
 
-All current project scores use **validation**, not test. The four-system Top-1 results are kNN 18.6821%, SVM 38.7616%, bounded RF 16.3141%, and official PoET 80.9394%. They share the complete 10,304-clip cohort but differ in representation and training history.
+The portable feature extractor uses MediaPipe complexity 1 and all decoded frames. Historical full experiments used complexity 2 and their recorded preprocessing. The descriptor remains 1,020-dimensional, but newly prepared features and scores are not guaranteed to match historical ones, even on the full split.
 
-The matched three-seed PoET mean is 81.1853% for fine-tuned B and 81.7352% for G+R, approximately +0.55 percentage points. The gain includes regressions and comes after repeated validation development. It is not evidence of statistical significance, a final-test improvement, or a new state of the art.
+## Workflow verification
 
-## Remaining work
+The new workflow was checked on **macOS arm64 with Python 3.10.18**. A fresh repository `.venv` installed `requirements-data.txt` successfully, and `pip check` found no dependency conflicts. The [verification record](WORKFLOW_VERIFICATION.json) retains the evidence.
 
-| Item | Current boundary | Completion evidence needed |
-| --- | --- | --- |
-| Final test | Official metadata exists; 32,941 test videos have not been prepared or evaluated | Freeze the methods, selected checkpoints, parameters, and failure policy before preparing and evaluating the test split |
-| Cost comparison | Scattered execution records exist; no common-hardware, common-protocol benchmark for every method | Separate fitting, cached prediction, storage, and video/pose preprocessing costs under a documented measurement protocol |
-| Team contributions | Shared reference implementations exist; actual individual work is not fully recorded | Each member's real code, experiments, analysis, writing, review, and presentation contributions linked to evidence |
-| Team review | Initial materials were organized by Xinjie with agent assistance | Members review and can explain the final version; contribution and AI-use statements updated from actual activity |
-| Individual paper review | Separate individual assignment; not replaced by report references | Each student's own completed review |
-| Final materials | Current reports/slides are complete working drafts based on validation | Update after agreed final evaluation and team review, then follow the actual course submission requirements |
+| Check | Actual result |
+| --- | --- |
+| Automated suite | 126 tests: 113 passed; 13 optional GPU/PoET checks skipped |
+| Official HTTP Range download | Metadata and one training plus one validation video downloaded: 13,622,614 bytes total; hashes matched the existing copies |
+| Real-data extraction | 80 already available local videos freshly processed into 60 train / 20 validation rows across 10 classes |
+| Reference/student runs | All three methods × both implementations completed: six runs; saved models/scalers reproduced predictions after reload |
+| Default student provenance | Each unchanged template was explicitly marked as delegating to reference and matched its reference metrics |
+| Repeat preparation | Rerunning preparation verified and reused the cache |
+| Independent implementation contract | A custom nearest-centroid unit test passed without reference delegation; this is a software check, not a member contribution |
 
-These tasks are not automatically started by publishing or cloning this repository. Additional training and final-test evaluation need a concrete agreed plan.
+This verifies the download components and the real-data extraction/classifier workflow separately. **It does not constitute a fresh-machine download of all 80 videos**: the extraction check reused 80 existing local video files. The new full profile was not run, Linux/Windows have not been verified on those platforms, and skipped optional checks do not establish PoET/GPU inference. No final-test evaluation was performed.
 
-## Prepared material status
+## Archived research already completed
 
-This repository includes [English report text](../reports/report-en.md), a [Chinese review copy](../reports/report-zh.md), three statistical figures, and the [AI-use/contribution record](AI_USE_AND_CONTRIBUTIONS.md). The original fourth report figure showed frames from real videos; the repository version describes those cases in text instead of redistributing the images. Reports follow Introduction, Methods, Results, Discussion, and Conclusion and retain the numerical findings, limitations, and references.
+The research workspace has complete 40,154 train and 10,304 validation videos/pose caches, three classical systems, official PoET inference, matched fine-tuning, geometry/retrieval experiments, repeated seeds, and documented weak/negative experiments. Error analysis and an original five-output video demo were also completed there.
 
-The original research workspace also has a one-page full proposal, a ten-page English report and nine-page Chinese review PDF, a two-page midpoint snapshot, nine-slide English PDF/PPTX, and speaker notes. Those PDF/PPTX deliverables and the original gallery are not included in this learning repository. Their existence is recorded here to explain overall project progress, not to promise downloadable files in this checkout.
+Full-vocabulary validation Top-1 results are kNN **18.6821%**, SVM **38.7616%**, bounded RF **16.3141%**, and official PoET **80.9394%**. Matched three-seed fine-tuned B is **81.1853%**, and G+R is **81.7352%**, approximately **+0.55 percentage points**. These are validation findings after repeated development, not final-test or significance claims.
 
-The report's contribution statement describes this version's preparation rather than inventing completed teammate work. The original midpoint snapshot describes October 4 progress and must be updated before representing a later milestone.
+The classical-versus-PoET comparison changes representation and training history alongside model type. PoET's matched ablation is a separate experiment. Neither should be conflated with the new mini runs.
 
-The pre-proposal has a previously recorded submission. The other prepared documents are working materials, not evidence of final submission, grading, or instructor approval. Current project information should be read from this snapshot and its evidence rather than older planning language retained in historical documents.
+## Remaining project work
 
-## What is intentionally absent from Git
+- Freeze final methods, checkpoints, settings, and failure policy, then prepare/evaluate the reserved 32,941-video test split. No final-test result exists.
+- Measure costs under common conditions, separating fitting/prediction from video/pose processing. Historical scattered timings are not a controlled speed ranking.
+- Complete and record each member's actual investigation, analysis, writing, and review. Supplied reference code does not assign credit.
+- Review/update final materials together. The separate individual paper review is not completed by the report's reference list.
 
-- Dataset video payloads and frame/pose caches.
-- Original report images containing people, the video gallery, and PDF/PPTX deliverables.
-- Trained checkpoints and full model or retrieval-bank payloads.
-- Third-party vendor source and local environments.
-- Credentials, machine connection details, and unrelated private course records.
+Extra full-data training and final-test evaluation are not launched by cloning, setup, or reading this repository.
 
-Some included source files need these omitted assets, their exact revisions, and recorded manifests to run. Follow [Setup](SETUP.md) and the [third-party source record](THIRD_PARTY.md); do not interpret the source export as a turnkey training or inference distribution. The [code map](CODE_MAP.md) identifies the available implementation and tests, while [Results](RESULTS.md) explains the exported evidence.
+## Materials and access
+
+The [English report](../reports/report-en.md), [Chinese review copy](../reports/report-zh.md), and three statistical figures explain the completed research. Real-video cases are described in text rather than distributing participant frames. [AI-use records](AI_USE_AND_CONTRIBUTIONS.md) explain initial assistance and known contributions.
+
+Original proposal/report/midpoint/presentation PDFs, PPTX, speaker notes, and the video gallery remain outside this learning repository. Working materials are not evidence of final submission, grading, or full-team review.
+
+Each collaborator needs their own authorized GitHub account. A signed-in ZIP download works for local execution. Data terms still apply to a private repository. Raw media, derived feature payloads, trained weights, full pose caches, vendor source, credentials, and private infrastructure details are omitted from Git.
+
+Complete PoET reproduction needs separate assets and an experiment protocol. It is not an automatic extension of the classical mini workflow.

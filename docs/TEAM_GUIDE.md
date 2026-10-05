@@ -1,84 +1,78 @@
-# Team guide: learn, investigate, and record your contribution
+# Team workflow: run, implement, compare
 
-[Home](../README.md) · [Methods](METHODS.md) · [Setup](SETUP.md) · [Code map](CODE_MAP.md) · [Status](STATUS.md)
+[Home](../README.md) · [Setup](SETUP.md) · [Methods](METHODS.md) · [Results](RESULTS.md)
 
-This repository is a shared starting point. The confirmed team members are Xinjie Huang, Duncan Stadler, Leyun Kim, and Ming Chen. Xinjie's existing investigation centers on PoET and its modifications. Other individual method assignments and completed contributions have not yet been consolidated; the presence of a reference implementation does not assign its ownership.
+Start with a reference on a small real dataset, understand its behavior, then replace the student template with code you can explain. kNN, Linear SVM, and Random Forest are available choices, not assignments to particular people. The team is Xinjie Huang, Duncan Stadler, Leyun Kim, and Ming Chen; agree on ownership together.
 
-## A practical learning path
+## The normal workflow
 
-### First: understand what a result means
+1. Clone or download the private repository and install `requirements-data.txt`.
+2. Read the official data terms and, if you accept, run the mini preparation described in [Setup](SETUP.md). It obtains up to 80 official clips and extracts local numeric features.
+3. Run your method with `--implementation reference`. Read its metrics and class-level outputs.
+4. Read [Methods](METHODS.md), `configs/<method>.json`, and the reference in `scripts/classical_models.py`.
+5. Edit `students/<method>.py`, then run with `--implementation student` and a new output directory.
+6. Compare the same data/configuration, explain discrepancies, and record the work you actually completed.
 
-Read the main README, then the [English report](../reports/report-en.md) or [Chinese review copy](../reports/report-zh.md). These are complete text analyses with statistical figures; the original video gallery and presentation files are not included. Be able to explain the input and output, the three dataset splits, and the difference between the four-system comparison and the matched PoET ablation.
+Once features exist, method runs do not download videos or repeat landmark extraction. If you are not ready to implement the method, use the reference to learn. The initial student template also delegates to reference; provenance records this honestly. Using a library may be appropriate, but credit its implementation and identify your adaptation and analysis.
 
-Check your understanding with these questions:
+## Student interface
 
-- Why is a predicted word label not an English translation?
-- Why must the scaler and neighbor bank use training data only?
-- What does it mean when a missing-hand clip remains in the denominator?
-- Why are official PoET and fine-tuned baseline B shown separately?
-- Why is a 0.55-percentage-point validation gain not a final-test claim?
+Each module exposes:
 
-### Next: trace one method
+```python
+fit(X_train, y_train, num_classes, config)
+predict_topk(model, X, top_k)
+```
 
-Read [Methods](METHODS.md) and use the [code map](CODE_MAP.md) to follow one path through `scripts/`: input representation, fitting or bank creation, prediction ranking, serialization, and metric calculation. Read the relevant checks in `tests/` alongside the implementation.
+`fit` returns your model or model state. X has 1,020 columns. **The runner has already fitted StandardScaler on train and transformed both splits.** Do not fit another scaler on validation.
 
-For a classical method, distinguish the shared descriptor from the classifier. For PoET, distinguish the original model, the geometry residual, and retrieval after classification. Being able to identify a library call is a useful start; explaining its inputs, parameters, and outputs is the next step.
+Labels use the data pack's local order, from 0 to `num_classes - 1`. Use the supplied class count instead of hard-coding 10 or 2,731.
 
-### Then: inspect evidence and reproduce a supported check
+The `config` passed to `fit` is the resolved algorithm-parameter dictionary, not the outer JSON object with `method`/`parameters`. If you change the implementation, set `IMPLEMENTATION_STATUS = "student_modified"` and explain the actual changes in `IMPLEMENTATION_NOTE`. Calling reference functions remains visible in the recorded provenance even if that declaration changes.
 
-Use [Results](RESULTS.md) to inspect the saved outcomes before running expensive workflows. Select one correct and one incorrect example and describe what the records show, separating observation from hypotheses about why the model behaved that way.
+`predict_topk` returns a dictionary:
 
-Follow [Setup](SETUP.md) for supported checks. Ask the team to agree on how required assets will be obtained or shared before attempting an asset-dependent workflow. Raw videos, pose caches, weights, and vendor source are omitted from Git. A source file existing here does not establish that it can run without those dependencies.
-
-Reproducing an existing output can demonstrate understanding and reproducibility. Record exactly what was reproduced; do not present it as a newly trained model or a new result.
-
-### Finally: agree on a bounded investigation
-
-Possible investigations include a clearly defined error slice, an explanation of model disagreements, or a small controlled comparison. Examples to discuss are neighbor-count sensitivity, the contribution of motion summaries, and a bounded forest-complexity comparison. These are options, not assigned tasks or experiments already authorized by the repository.
-
-Write the question, fixed settings, changed factor, validation metric, and finite run budget before starting. Coordinate shared features and model versions so everyone compares compatible inputs. Keep final test reserved until the team freezes its protocol.
-
-## What counts as useful evidence
-
-A method-focused contribution should make it clear what the member actually did. Useful evidence may include:
-
-- A code change or reviewed implementation, with its assumptions and provenance explained.
-- An existing result independently reproduced, with the configuration and verification recorded.
-- A controlled experiment whose input, changed factor, budget, and output are identifiable.
-- An error analysis that distinguishes counts, visible observations, and uncertain explanations.
-- A report or presentation section whose numerical claims can be traced to the evidence.
-
-This list is a collaboration guide, not an additional course rubric. A contribution need not invent an algorithm or outperform PoET. It should go beyond attributing a supplied implementation to someone solely because their name is placed beside it.
-
-## Contribution record
-
-Keep one entry per meaningful completed activity in a team-agreed document or pull-request description. Use this format:
-
-| Field | What to record |
+| Key | Contract |
 | --- | --- |
-| Date and member | Who performed the activity and when |
-| Question or purpose | What the work was intended to establish |
-| Actual work | Code, reproduction, experiment, analysis, review, writing, or presentation work completed |
-| Evidence | Commit, file, configuration, exported result, or review link |
-| Findings and limits | What the evidence supports and what remains uncertain |
-| AI or other assistance | What a tool or collaborator generated, and what the member checked or changed |
-| Report connection | Which figure, table, paragraph, or presentation section it supports |
+| `topk_indices` | Integer N×K array; K is at most the requested `top_k` |
+| `topk_scores` | Finite numeric array of the same shape |
+| `valid_mask` | Boolean array of the same shape |
+| `score_kind` | Optional description of the scores |
 
-A plan is not a completed contribution. Reading a report is not the same as verifying its results. Updating a contribution statement should follow the work, rather than serve as an assignment of credit in advance.
+Valid IDs must be within the local vocabulary and cannot repeat within one row. The default request is Top-5. If fewer candidates are supported, return fewer columns or pad with `-1` and `valid_mask=False`. Do not invent zero-score candidate labels. A row with no valid prediction remains in the denominator and counts as wrong.
 
-## AI assistance and review
+The runner owns common preprocessing, checks, metrics, and output records. The student module owns fitting and prediction. Do not change shared evaluation simply to make a result look better.
 
-The existing pipeline and initial materials were prepared under Xinjie's direction with substantial coding-agent and writing assistance. Assistance included data preparation, feature and adapter implementation, user-authorized experiment execution, numerical checks, demo development, plots, and draft writing. Read the [documented AI-use record](AI_USE_AND_CONTRIBUTIONS.md). The existing reference code should not be described as entirely hand-written by a team member.
+## Compare implementations before new experiments
 
-The team remains responsible for the version it submits. Read and correct generated explanations, trace numerical claims to records, and be able to explain your contribution. Keep the AI-use record aligned with the actual work; it should not claim that everyone has already reviewed or mastered the materials.
+Keep the same feature directory and config. Compare row counts, label order, Top-1/Top-5/macro metrics, per-class changes, and a few disagreeing predictions. Check whether tie rules, candidate counts, or algorithm settings changed, and whether the student still calls reference.
 
-## Making changes safely and reproducibly
+A score difference may indicate a bug or an intentional method difference. Explain which it is. An unchanged template demonstrates the interface and environment; it does not show an independently implemented algorithm.
 
-- Keep one clear purpose per change and describe what changed, why, and how it was checked.
-- Discuss changes to shared feature definitions, label order, missing-data rules, or model-selection criteria before comparing new results with the existing tables.
-- Preserve existing results and negative findings. New experiments need new, identifiable records rather than overwriting a favorable or unfavorable run.
-- Do not use final-test errors to tune the model. Agree on the final protocol first.
-- Record execution evidence outside Git when it contains large or restricted assets, and commit only appropriate summaries or code.
-- Keep videos, pose payloads, trained weights, credentials, personal machine details, and unrelated course records out of the repository.
+JSON accuracy fields use proportions from 0 to 1; terminal output uses percentages. Additional helper files you import are not automatically included in the runner's selected-source hash list, so record their commits/files in your contribution evidence too.
 
-The repository supports learning and collaboration. It does not automatically launch training, grant access to another member's machine, invite collaborators, or submit coursework.
+The default mini contains at most 60 training and 20 validation clips across 10 classes; inspect its manifest for actual counts. It is a small pipeline check and programming exercise. Its accuracy is not a robust estimate and cannot be ranked against the report's full 2,731-class results.
+
+## Agree on a bounded investigation
+
+After understanding the reference, agree on a question and finite run budget. Possible investigations include neighbor-count sensitivity or a bounded forest-complexity change. Record the data, fixed settings, changed factor, metric, and budget before running.
+
+Full preparation and training are explicit larger tasks, not automatic next steps. Full video payload is approximately 31 GB and preprocessing takes additional time. Full SVM has 2,731 binary fits; the teaching runner uses one worker and limits numerical threads. Do not estimate laptop cost from archived parallel runs.
+
+The portable extractor uses MediaPipe complexity 1, while historical features used complexity 2. Matching descriptor dimensions does not guarantee identical input values or old scores; identify which feature preparation produced each result.
+
+Keep the official split assignments and train-only fitting rules. Final test remains reserved until methods and evaluation are frozen; do not tune using test errors.
+
+## Record actual contributions
+
+| Field | Include |
+| --- | --- |
+| Date and member | Who did the work and when |
+| Actual activity | Implementation, reproduction, experiment, analysis, review, writing, or presentation |
+| Evidence | Commit/file, data identity, config, output directory, or report section |
+| Findings and limits | What the evidence supports and what remains unresolved |
+| Assistance | Reference/library code, collaborators, AI assistance, and what you checked or changed |
+
+The initial research was organized by Xinjie with substantial agent assistance. Supplied reference code is shared infrastructure, not evidence of a teammate's completed work. Read the [AI-use record](AI_USE_AND_CONTRIBUTIONS.md), and update it from actual activity. Each member should be able to explain their submitted contribution.
+
+Preserve previous and failed outputs and negative findings. Keep dataset payloads, derived data, generated models, credentials, and private machine details out of Git. Accessing the repository does not submit coursework or launch experiments automatically.

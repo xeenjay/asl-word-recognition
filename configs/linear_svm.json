@@ -1,0 +1,5 @@
+{
+  "method": "linear_svm",
+  "parameters": {"C": 0.01, "dual": false, "tol": 0.001, "max_iter": 2000,
+    "random_state": 20261002, "parallel_ovr": false, "n_jobs": 1}
+}

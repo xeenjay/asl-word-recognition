@@ -1,105 +1,82 @@
-# Code reading map
+# Code map
 
-Start with the small CPU example. The repository contains the project's own
-core code, not a copy of the original experiment directories. Large data,
-weights, caches, and the upstream PoET source must be obtained separately.
+[Home](../README.md) · [Setup](SETUP.md) · [Methods](METHODS.md) · [Student interface](TEAM_GUIDE.md)
 
-## Suggested reading order
+The main team workflow separates one-time real-data preparation from classifier implementation. You can write a classical method without editing video extraction, PoET, or historical orchestration.
 
-| Step | Read | What to understand |
-|---|---|---|
-| 1 | `scripts/quickstart_classical.py` | An executable synthetic example of the feature → scaler → classifier → reload flow. It is not an ASL benchmark. |
-| 2 | `scripts/classical_features.py` | Raw body and hand coordinates become one fixed 1,020-dimensional vector. Missing observations have masks and coverage values. |
-| 3 | `scripts/classical_models.py` | A train-only scaler, standard cosine kNN, scikit-learn LinearSVC, bounded RandomForest, Top-k ranking, and serialization. |
-| 4 | `scripts/infer_video.py`, `scripts/_poet_runtime.py` | Official landmark extraction, normalization, temporal sampling, fixed vocabulary and strict checkpoint loading. Requires optional assets. |
-| 5 | `scripts/poet_geometry.py`, `scripts/poet_methods.py` | Original-image 2D relationships form a 28-dimensional frame vector; a 28→32→128 residual MLP augments the PoET frame embedding. |
-| 6 | `scripts/rerank_retrieval_pilot.py` | `build_memory`, `memory_scores`, `rank_candidates`: train-only, signer-balanced similarity scores rerank the existing five candidates. |
-| 7 | `scripts/finetune_methods.py`, `scripts/evaluate_methods.py` | Paired sampling, weighted word loss, optional geometry/attribute loss, model selection, strict epoch-boundary recovery and independent evaluation. |
+## Main files
+
+| File or directory | Purpose |
+| --- | --- |
+| `scripts/prepare_team_data.py` | Obtain selected official data after license acceptance, extract local landmarks/features, record provenance |
+| `run.py` | Choose data/method/implementation/config, fit common preprocessing, evaluate, and record outputs |
+| `team/runner.py` | Data/config validation, train-only scaling, student dispatch, metrics, reload checks, and provenance |
+| `team/reference.py` | Thin adapter to the shared reference classifiers, with delegation tracking |
+| `students/knn.py` | Editable kNN interface; initially a labeled reference delegate |
+| `students/linear_svm.py` | Editable SVM interface |
+| `students/random_forest.py` | Editable Random Forest interface |
+| `configs/<method>.json` | Method name and algorithm parameters |
+| `scripts/classical_models.py` | Existing reference models, ranking, scaler utilities, and serialization |
+| `scripts/classical_features.py` | Raw body/hand coordinates → a 1,020-dimensional clip descriptor |
+| `data/classical-mini/` | Locally prepared real mini arrays/labels/manifest; excluded from Git |
+| `outputs/<run-name>/` | Metrics, per-class results, predictions, model/scaler, and provenance; use a new directory per run |
+| `requirements-data.txt` | Classical dependencies plus official-data download and MediaPipe/OpenCV preparation dependencies |
+| `requirements-classical.txt` | CPU fitting/evaluation after features are available |
+
+The student contract is `fit(X_train, y_train, num_classes, config)` and `predict_topk(model, X, top_k)`. The runner has already standardized X using train-only statistics. [Team guide](TEAM_GUIDE.md) gives the required candidate-ID/score/mask return format.
+
+An unchanged student module delegates to reference, and run provenance records that fact. `--implementation student` alone does not imply an independent algorithm.
+
+JSON configs wrap parameters under `parameters`; the student `fit` function receives only the resolved parameter dictionary. The runner's JSON accuracy values are 0–1 proportions, while the CLI prints percentages.
 
 ## Data flow
 
 ```text
-one presegmented word video
-  -> MediaPipe raw landmarks + presence masks
-     -> 1,020-dimensional handcrafted descriptor
-        -> train-only StandardScaler -> kNN / Linear SVM / Random Forest
-     -> official normalization and temporal preparation: 128 x 188
-        -> official PoET -> word logits and 128-dimensional CLS representation
-     -> shared image x/y + identical sampled frame indices
-        -> 28-dimensional geometry -> residual MLP -> geometry PoET
-           -> training CLS memory -> rerank its original Top-5 candidates
+official ASL Citizen source + user's license acceptance
+  -> deterministic train/validation mini clip selection
+  -> local video download / reuse
+  -> MediaPipe landmarks + missing-detection handling
+  -> 1,020-dimensional clip features, labels, provenance
+  -> train-only StandardScaler
+  -> reference or students/<method>.py
+  -> ranked labels + scores + validity masks
+  -> common metrics and saved run records
 ```
 
-The traditional classifiers share the handcrafted descriptor. PoET uses another
-representation and pretrained weights, so their comparison is a system
-comparison, not an experiment changing only the classifier. The geometry and
-retrieval comparisons use matched PoET baselines.
+Default mini: sorted gloss order's first 10 labels, filename-hash selection within each class/split, up to 6 train and 2 validation clips per label (smaller groups keep all available clips). Local class IDs are 0–9. Full preparation is separately requested and retains the complete 2,731-label train/validation task. See [Data provenance](DATA_PROVENANCE.md) for the exact source contract.
 
-Retrieval uses a cosine kernel `exp(-10 * (1 - cosine))`, averaging examples
-within each signer and then signers within each class. It mixes normalized
-memory scores with the original Top-5 softmax at weights 0.25 and 0.75. It cannot
-introduce a class outside those five candidates or improve Top-5 membership.
-This learned-embedding reranker is separate from the handcrafted-feature kNN.
+The portable extractor uses MediaPipe complexity 1 and all decoded frames; historical extraction used complexity 2 and a recorded protocol. Shared descriptor formulas do not guarantee identical feature values or exact old-score reproduction.
 
-## Supporting modules
+The classifier starts from cached features; changing its code does not download video again. The descriptor includes temporal-pyramid means, standard deviations, signed/absolute motion, and coverage statistics. Missing observations use masks. Read [Methods](METHODS.md) for the dimension breakdown.
 
-| Area | Files | Status in this learning repository |
-|---|---|---|
-| Pose preparation and audit | `prepare_poses.py`, `evaluate_pose_cache.py`, `install_mediapipe_asset.py` | Retained core logic; requires independently acquired official assets and verified input manifests. Formal scripts retain train/validation restrictions. |
-| Classical full-data flow | `prepare_classical_dataset.py`, `run_classical_baselines.py`, `verify_classical_results.py`, `infer_classical.py` | Explicit cache arguments replace historical run locations. Complete input cache manifests, arrays and trained artifacts are not included. |
-| Geometry cache | `prepare_geometry_cache.py` | Stores full-frame geometry and checks that main-branch sampling selects the same frames. |
-| Training contracts | `finetune_baseline.py`, `method_runtime.py`, `method_optimizer.py` | Complete local import dependencies of the unified trainer; no private launch or queue infrastructure. |
-| Attribute experiment | `build_asllex_targets.py`, `method_runtime.py`, `poet_methods.py` | Historical auxiliary training: handshape/location/movement heads. Requires an independently acquired ASL-LEX table. Not required for the geometry+retrieval method. |
-| Retrieval experiments | `extract_retrieval_features.py`, `extract_factorial_retrieval_features.py`, `rerank_retrieval_pilot.py`, `rerank_factorial_retrieval.py` | Core feature extraction and fixed comparisons. Full factorial replay requires new correctly bound preregistration, model/cache manifests and reference predictions; these are not bundled. |
-| Local evidence | `run_logged.py` | Runs one explicit local command and records configuration, code hashes, logs and exit state. Does not access a remote server. |
-| Upstream source | `fetch_vendor.py` | Downloads or checks the pinned upstream source. Vendor source is excluded from version control. |
+## Advanced research source
 
-## What was reused and what the project added
+These files explain the completed research. They are not prerequisites for implementing a mini classical classifier.
 
-MediaPipe provides pretrained landmark detection. The official PoET code,
-weights, normalization and Transformer are reused. SVM and RF use scikit-learn;
-kNN search and voting are an implementation of a standard algorithm.
+| Area | Main files in `scripts/` | Separate requirements |
+| --- | --- | --- |
+| Official PoET inference | `infer_video.py`, `_poet_runtime.py` | Upstream source, official weights, MediaPipe assets, a permitted video |
+| Research pose preparation/audit | `prepare_poses.py`, `evaluate_pose_cache.py` | Verified video/pose manifests and payloads |
+| Original full classical pipeline | `prepare_classical_dataset.py`, `run_classical_baselines.py`, `verify_classical_results.py`, `infer_classical.py` | Compatible caches and historical-style records; distinct from the teaching `run.py` |
+| Relative geometry | `poet_geometry.py`, `poet_methods.py`, `prepare_geometry_cache.py` | Geometry/pose assets with identical selected frame indices |
+| Neural training/evaluation | `finetune_methods.py`, `evaluate_methods.py`, `method_runtime.py`, `method_optimizer.py` | Protocol, optional dependencies, weights, complete caches/manifests |
+| Learned-embedding retrieval | `extract_retrieval_features.py`, `extract_factorial_retrieval_features.py`, `rerank_retrieval_pilot.py`, `rerank_factorial_retrieval.py` | Each model's own train CLS bank and bound evaluation records |
+| Attribute direction | `build_asllex_targets.py`, `poet_methods.py` | Independently obtained ASL-LEX data; historical auxiliary experiment |
+| Upstream source | `fetch_vendor.py` | Pinned source retrieval/check; vendor stays outside Git |
+| Local command records | `run_logged.py` | Wrap an explicit local command; separate from the teaching runner's own records |
+| Synthetic mechanics | `quickstart_classical.py` | Invented trajectories; no dataset download and no ASL recognition claim |
 
-Project additions include the common handcrafted video descriptor, dataset and
-vocabulary adaptation, relative-geometry residual branch, train-only
-signer-balanced reranking, controlled comparisons, missing-observation handling,
-and reproducible evaluation. The repository does not claim invention of kNN,
-SVM, RF, or the original PoET model.
+Use [Third-party sources](THIRD_PARTY.md) and [Experiment protocol](EXPERIMENT_PROTOCOL.md) for advanced work. The original full research runner has different input contracts and parallelism from the one-worker teaching runner.
 
-## Changes made for this repository
+## Tests and common mistakes
 
-- `quickstart_classical.py` is a new, small synthetic teaching example. It fits a
-  smaller RF than the formal experiment and makes no recognition-accuracy claim.
-- `prepare_classical_dataset.py` accepts train/validation cache paths and SHA256s
-  explicitly instead of referencing historical private run directories. The
-  full-cohort, split-separation and identity checks remain.
-- `run_classical_baselines.py` defaults to CPU; all other classifier settings are
-  retained. Its full-data runner still uses multiple worker processes and should
-  only be started after reading its resource settings.
-- `method_runtime.py` drops an unused default pointing at a historical attribute
-  target file. Attribute training still requires an explicit verified target file.
-- `run_logged.py` no longer records a machine hostname or uses a private path to
-  decide its location. Its source snapshot allows absent optional vendor code,
-  so it can wrap the classical-only example. It still records the command and
-  paths used in each local run; generated runs are excluded from the repository.
-- The four selected test modules retain algorithm and contract tests. PoET tests
-  additionally check whether optional vendor source is installed. Historical
-  preregistration-file tests use a small explicitly labeled synthetic fixture;
-  it is not a real experiment authorization or historical evidence.
-- `tests/test_portable_runner.py` additionally checks a successful and a failed
-  local command without optional vendor assets, including preserved exit status.
+`tests/` covers numerical behavior and contracts. Some fixtures are synthetic; optional PoET/GPU tests may need assets. A skip is not successful model inference. Actual new-workflow acceptance is recorded in [Status](STATUS.md); archived checks do not establish that newly changed code passed.
 
-No private SSH setup, data-transfer/recovery scripts, experiment dispatch tools,
-frozen experiment directories, models, datasets or original video material are
-part of this code package. The old five-method web service was bound to specific
-local experiment artifacts and is not a portable application in this package.
+- Mini scores and full-vocabulary scores describe different tasks.
+- Reported archived project scores are validation, not final test.
+- PoET's learned-embedding retrieval is different from handcrafted-feature kNN.
+- Geometry uses shared image x/y, not recovered metric 3D.
+- An upstream docstring mentions 194 values, but the pinned PoET input implementation produces 188 coordinates (94 x/y landmarks).
+- The original web demo depends on omitted artifacts and is not supplied as a portable app.
 
-## Known reading traps
-
-- The upstream extraction docstring says 194 features; its actual implementation
-  produces 188 (94 x/y points), which our adapter checks.
-- The geometry uses shared original image x/y, not the independently normalized
-  PoET input or a shared metric 3D coordinate system.
-- A synthetic test pass, cache extraction success, or saved checkpoint is not a
-  validation accuracy result. Reported project results are validation results;
-  no final test evaluation is provided here.
+MediaPipe, PoET, and scikit-learn retain upstream credit. Custom adaptation/evaluation code used substantial agent assistance. Distinguish shared reference infrastructure from each member's actual implementation, experiments, and analysis.

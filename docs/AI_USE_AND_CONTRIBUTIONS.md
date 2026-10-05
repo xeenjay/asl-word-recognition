@@ -30,3 +30,25 @@ The final team contribution statement and any final-test results must be updated
 ## 中文核对
 
 这份记录说明AI实际参与了调研、实现、实验执行、验证、分析、demo及文字排版。它没有声称你逐行手写代码，也没有声称所有组员已阅读/掌握或完成分工。你负责对最终提交版本进行审核并能解释；队友贡献必须按实际工作填写。本轮整理材料复用了已有validation结果，没有新训练、test或新性能提升。
+
+## Team programming workflow update — October 4, 2026
+
+Xinjie requested an editable repository where teammates can implement their
+chosen methods, reuse the supplied reference when needed, and run experiments.
+An agent prepared the student interfaces, configurations, shared runner, official
+data acquisition and local feature preparation, tests, and revised instructions.
+The reference-delegating templates are starting material, not completed work by
+the other members. Individual assignments remain for the team to confirm.
+
+This update includes new engineering checks using 60 real training clips and 20
+validation clips from ten classes, with a separately identified portable
+extractor. Each of three reference methods and its unchanged student template
+was fitted/evaluated and checked after model reload. These small runs do not
+replace the historical full experiments or establish a new benchmark result.
+No test evaluation or full-data retraining was performed. Dataset payloads were
+not uploaded; each user prepares their own inputs under the official terms.
+See [workflow verification](WORKFLOW_VERIFICATION.json) for the actual checks.
+
+组员工作入口、下载/预处理、运行器和模板由 agent 按用户要求协助准备。本轮确实做了
+80 条真实视频的小规模流程验收及三方法参考/模板运行，与上面的早期写作工作区分。
+不能把这些 agent 检查写成某位组员已经完成的实现、实验或人工审核。

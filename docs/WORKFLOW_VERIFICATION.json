@@ -1,0 +1,121 @@
+{
+  "checked_at": "2026-10-04T20:15:43.072227-04:00",
+  "scope": "Portable team development workflow; not the full research benchmark",
+  "fresh_environment": {
+    "python": "3.10.18",
+    "platform": "macOS arm64",
+    "requirements_file": "requirements-data.txt",
+    "install_passed": true,
+    "pip_check_passed": true,
+    "core_versions": {
+      "numpy": "1.26.4",
+      "scipy": "1.15.2",
+      "scikit-learn": "1.6.1",
+      "joblib": "1.4.2",
+      "threadpoolctl": "3.5.0",
+      "mediapipe": "0.10.21",
+      "opencv-contrib-python": "4.11.0.86",
+      "requests": "2.32.3"
+    }
+  },
+  "unit_tests": {
+    "total": 126,
+    "passed": 113,
+    "skipped_optional": 13,
+    "failed": 0
+  },
+  "official_source_network_check": {
+    "metadata_sha256_verified": true,
+    "sample_downloads": {
+      "train": {
+        "sha256": "7021277d72d18ccd26962bfba4f8ad9af5f5289e25e519b339c2d4a2d093df18",
+        "bytes": 520716,
+        "matches_existing_verified_video": true
+      },
+      "val": {
+        "sha256": "c8a1f064a82e5515e465c59d6c0f860f9a69dc1db7a9a93cdcef5cecad547347",
+        "bytes": 802184,
+        "matches_existing_verified_video": true
+      }
+    },
+    "downloaded_bytes": 13622614,
+    "test_videos_downloaded": false
+  },
+  "real_data_preparation": {
+    "classes": 10,
+    "train_samples": 60,
+    "validation_samples": 20,
+    "selected_video_bytes": 46824079,
+    "source": "existing personal official video copy, not a new 80-video network download",
+    "extractor": "team-holistic-static-complexity1-v1",
+    "all_80_clips_prepared": true,
+    "elapsed_seconds": 187.82868420891464,
+    "second_prepare_verified_and_reused": true,
+    "manifest_sha256": "ec41d997961afaa54324669aecbb30b83e602619de0624c046d7a5a4e88f9c21"
+  },
+  "six_real_classifier_runs": [
+    {
+      "method": "knn",
+      "implementation": "reference",
+      "effective": "reference",
+      "completed": true,
+      "saved_model_reload_exact": true
+    },
+    {
+      "method": "knn",
+      "implementation": "student",
+      "effective": "student_reference_delegate",
+      "completed": true,
+      "saved_model_reload_exact": true
+    },
+    {
+      "method": "linear_svm",
+      "implementation": "reference",
+      "effective": "reference",
+      "completed": true,
+      "saved_model_reload_exact": true
+    },
+    {
+      "method": "linear_svm",
+      "implementation": "student",
+      "effective": "student_reference_delegate",
+      "completed": true,
+      "saved_model_reload_exact": true
+    },
+    {
+      "method": "random_forest",
+      "implementation": "reference",
+      "effective": "reference",
+      "completed": true,
+      "saved_model_reload_exact": true
+    },
+    {
+      "method": "random_forest",
+      "implementation": "student",
+      "effective": "student_reference_delegate",
+      "completed": true,
+      "saved_model_reload_exact": true
+    }
+  ],
+  "unchanged_student_templates_match_reference": true,
+  "independent_student_model_test": "nearest-centroid implementation passed without reference calls; unit test only",
+  "limits": {
+    "full_profile_not_executed": true,
+    "test_split_not_evaluated": true,
+    "windows_linux_not_live_verified": true,
+    "dataset_payloads_not_published": true,
+    "not_a_full_vocabulary_performance_result": true
+  },
+  "code_sha256": {
+    "run.py": "30215f8d33df0d6ff163607dadb969e64e0f14144b20db418e8e8c6bed026d3c",
+    "team/runner.py": "9f91a1f7c5615d9fb35c65e3d81cef6e2454a9afa7f65f377dd82bff4c45a13e",
+    "team/reference.py": "e6a7f738ef5bbcd685137cb43d3a52e155017837398b0afe8519c8268216e9e7",
+    "scripts/prepare_team_data.py": "f8b092f5a261bd52a163a4a82318e19895b6720758ff8574ab09674162a889d1",
+    "scripts/asl_citizen_source.py": "fc29769d6b2c8e847c4e81ba572793caf366fa0ca01ac6bcaa8b6e37704bef1a",
+    "scripts/classical_features.py": "61b111a5560b725927e0cb40cca5c5243ecd39c65629929090613a743697d5cc",
+    "scripts/classical_models.py": "33ca797ae3500146c7b24bfbabd71a0cd577d1e766bb2cc63389b81005494eea",
+    "scripts/build_team_data.py": "f102746b315e400e72e3031f5c636691bb709cff8f12c0002f206ac85852fbc2",
+    "requirements-data.txt": "d2b2650e8840cf2d4533e79aed241768d88c7c5a0e89028342dd2721ebc4bc21",
+    "requirements-classical.txt": "709f6418ef995783cca709846dd656775b8cd93e2d446074fdd6168bdedb1a19"
+  }
+}

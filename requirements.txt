@@ -1,2 +1,2 @@
-# Default setup: CPU classical methods, no PoET assets.
--r requirements-classical.txt
+# Default: local real-data preparation and CPU team experiments.
+-r requirements-data.txt
