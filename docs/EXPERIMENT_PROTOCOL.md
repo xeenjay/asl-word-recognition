@@ -20,8 +20,8 @@ default. Always preserve the recorded extractor, vocabulary and data hashes.
 
 Use `run.py` for one method at a time. `--implementation reference` uses the
 shared reference code. `--implementation student` uses that method's file under
-`students/`. The initial student files explicitly delegate to the reference;
-they become a student's contribution only through actual understanding and
+`students/`. The student files are exercises with TODOs (see `docs/roles/`);
+they become a member's contribution only through actual understanding and
 documented work. Custom-code errors stop the run instead of silently switching
 to the reference. The runner fits standardization on training data only and
 keeps validation labels outside the student's fit function.

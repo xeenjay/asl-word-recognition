@@ -2,7 +2,9 @@
 
 [Home](../README.md) · [Setup](SETUP.md) · [Data provenance](DATA_PROVENANCE.md) · [Research results](RESULTS.md)
 
-Snapshot: **October 4, 2026**. The current collaboration task is a real-data classical reference → student implementation → saved-results comparison workflow. It is separate from the archived full research experiments.
+Snapshot: **October 4, 2026**, with an update on **October 15, 2026**: the student files are now exercises (Member 1 kNN, Member 2 Linear SVM and hand normalization, Member 3 random forest) with self-check tests and guides in [docs/roles](roles/README.md), and the final test was evaluated on October 12 ([Results](RESULTS.md)). The rest of this page describes the October 4 snapshot unless marked otherwise.
+
+The current collaboration task is a real-data classical reference → student implementation → saved-results comparison workflow. It is separate from the archived full research experiments.
 
 ## Team workflow and assets
 
@@ -11,7 +13,7 @@ Snapshot: **October 4, 2026**. The current collaboration task is a real-data cla
 | Local data preparation | `prepare_team_data.py` obtains official metadata/selected clips and extracts features after explicit dataset-license acceptance |
 | Default mini | 10 sorted-gloss labels; deterministic selection of up to 6 train + 2 validation clips per label; at most 80 real clips |
 | Method runner | `run.py` selects reference/student kNN, Linear SVM, or Random Forest |
-| Student code | `students/<method>.py`; initial templates delegate to reference and record that provenance |
+| Student code | `students/<method>.py`; since Oct 15 these are from-scratch exercises with TODOs (see [roles](roles/README.md)); on Oct 4 they were templates delegating to reference |
 | Configuration | `configs/<method>.json`; common preprocessing is fitted on train only |
 | Data distribution | No videos or derived feature packs in Git/Release; each user obtains selected inputs from the official source |
 | Full preparation | Explicit `--profile full`; complete train/validation only, approximately 31 GB of video plus processing outputs/overhead |
@@ -43,18 +45,18 @@ This verifies the download components and the real-data extraction/classifier wo
 
 The research workspace has complete 40,154 train and 10,304 validation videos/pose caches, three classical systems, official PoET inference, matched fine-tuning, geometry/retrieval experiments, repeated seeds, and documented weak/negative experiments. Error analysis and an original five-output video demo were also completed there.
 
-Full-vocabulary validation Top-1 results are kNN **18.6821%**, SVM **38.7616%**, bounded RF **16.3141%**, and official PoET **80.9394%**. Matched three-seed fine-tuned B is **81.1853%**, and G+R is **81.7352%**, approximately **+0.55 percentage points**. These are validation findings after repeated development, not final-test or significance claims.
+Full-vocabulary validation Top-1 results are kNN **18.6821%**, SVM **38.7616%**, bounded RF **16.3141%**, and official PoET **80.9394%**. Matched three-seed fine-tuned B is **81.1853%**, and G+R is **81.7352%**, approximately **+0.55 percentage points**. These are validation findings after repeated development. Final-test results (October 12) are in [Results](RESULTS.md).
 
 The classical-versus-PoET comparison changes representation and training history alongside model type. PoET's matched ablation is a separate experiment. Neither should be conflated with the new mini runs.
 
 ## Remaining project work
 
-- Freeze final methods, checkpoints, settings, and failure policy, then prepare/evaluate the reserved 32,941-video test split. No final-test result exists.
+- ~~Freeze final methods and evaluate the 32,941-video test split~~ — done on October 12, 2026 under a preregistered one-shot protocol; see [Results](RESULTS.md). No further test evaluation is planned.
 - Measure costs under common conditions, separating fitting/prediction from video/pose processing. Historical scattered timings are not a controlled speed ranking.
 - Complete and record each member's actual investigation, analysis, writing, and review. Supplied reference code does not assign credit.
 - Review/update final materials together. The separate individual paper review is not completed by the report's reference list.
 
-Extra full-data training and final-test evaluation are not launched by cloning, setup, or reading this repository.
+Extra full-data training and test evaluation are not launched by cloning, setup, or reading this repository.
 
 ## Materials and access
 

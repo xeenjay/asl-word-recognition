@@ -4,15 +4,17 @@
 
 这个仓库让组员按 **跑真实数据参考实现 → 理解方法 → 修改学生代码 → 运行并比较结果** 的顺序工作。任务是“一段已经剪好的单词手语视频 → 一个词标签”，不做连续句子翻译。
 
-可编辑的三个方法是 **kNN、Linear SVM、Random Forest**，共享 1,020 维姿态/运动特征。还写不出来时可以先用 reference；默认 `students/` 模板也委托 reference，运行记录会明确标记，不能把未修改模板记为独立实现。
+三个传统方法 **kNN、Linear SVM、Random Forest** 共享 1,020 维姿态/运动特征。三位组员各自在 `students/` 里从零实现其中一个，有 TODO、提示和自查测试引导。
+
+**从这里开始：[成员任务](docs/roles/README.md)**（英文），写明每个角色要学什么、写什么、怎么自查、做什么实验、交什么，以及建议时间表。
 
 ## 开始运行
 
 先接受私有仓库邀请，用自己的 GitHub 账号认证。也可以登录网页后 **Code → Download ZIP**，解压并进入项目目录运行。
 
 ```bash
-git clone https://github.com/huiliyi-XJ/asl-word-recognition.git
-cd asl-word-recognition
+git clone https://github.com/huiliyi-XJ/asl-word-recognition-team.git
+cd asl-word-recognition-team
 python3.10 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements-data.txt
@@ -36,7 +38,13 @@ Git 和 GitHub Release 不重新分发数据/特征包。首次需要联网下�
 python run.py --method knn --implementation reference --data data/classical-mini --output outputs/knn-reference
 ```
 
-修改 `students/knn.py`，再运行：
+按任务说明填写自己角色文件里的 TODO（例如 `students/knn.py`），先自查：
+
+```bash
+python -m unittest tests.test_member1_knn -v
+```
+
+再用同一个运行器运行：
 
 ```bash
 python run.py --method knn --implementation student --data data/classical-mini --output outputs/knn-student
@@ -54,7 +62,7 @@ SVM/RF 分别把 `knn` 换成 `linear_svm` / `random_forest`，编辑对应文�
 
 历史完整实验为 40,154 train / 10,304 validation：kNN **18.6821%**、SVM **38.7616%**、受限 RF **16.3141%**、官方 PoET **80.9394%**。PoET 的输入和预训练不同，因此这是完整系统比较。
 
-PoET 内部三 seed 对照另列：微调 B **81.1853%** → G+R **81.7352%**，约 **+0.55 个百分点**。B 与官方原始 checkpoint 不同；这些全是 validation，32,941 条最终 test 尚未评价。
+PoET 内部三 seed 对照另列：微调 B **81.1853%** → G+R **81.7352%**，约 **+0.55 个百分点**。B 与官方原始 checkpoint 不同；这些是 validation 结果。32,941 条最终 test 已于 2026-10-12 按事前协议只评价一次，见 [Results](docs/RESULTS.md)。
 
 便携提取使用 MediaPipe model complexity 1 和全部解码帧；历史实验使用 complexity 2 及其记录的预处理协议。虽然描述符都是 1,020 维，特征数值不保证相同，因此新全量运行也不能承诺精确复现历史分数。
 
@@ -67,6 +75,6 @@ PoET 内部三 seed 对照另列：微调 B **81.1853%** → G+R **81.7352%**，
 - 已完成、待完成及验收：[Status](docs/STATUS.md)。
 - 记录本人实际工作：[Team guide](docs/TEAM_GUIDE.md)、[AI 使用记录](docs/AI_USE_AND_CONTRIBUTIONS.md)。
 
-团队为 Xinjie Huang、Duncan Stadler、Leyun Kim、Ming Chen；本页不指定各人方法。Xinjie 在 agent 协助下组织初始研究，参考代码不能自动算作某位队友已完成的贡献。使用成熟库/参考实现应如实注明，再记录自己的实现、实验、分析和写作。
+团队为 Xinjie Huang、Duncan Stadler、Leyun Kim、Ming Chen；组员 1–3 各负责一个传统方法，谁担任哪个角色由团队决定。Xinjie 在 agent 协助下组织初始研究，参考代码不能自动算作某位队友已完成的贡献。使用成熟库/参考实现应如实注明，再记录自己的实现、实验、分析和写作。
 
 仓库包含文字报告与统计图，不提交人物视频/帧、权重、完整缓存、PDF/PPTX、密钥或私人机器信息。PoET 完整复现仍需独立资产与实验协议，不是当前教学入口的一键功能。

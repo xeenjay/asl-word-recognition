@@ -1,8 +1,45 @@
 # Results and how to read them
 
-These are existing **development-validation results**, exported on October 4, 2026. No training, inference, or test evaluation was performed to create this repository summary. Final test results are not available.
+This page was first exported on October 4, 2026 with **development-validation results** (sections from "Four-system comparison" on). The final test was evaluated once on October 12, 2026; see the next section. Validation and test numbers must always be reported separately.
 
 The task is isolated ASL word recognition: one presegmented video is assigned one of 2,731 labels. The official signer-disjoint split contains 40,154 training clips, 10,304 validation clips, and 32,941 reserved test clips. All full-vocabulary results below retain the complete validation denominator, including clips with missing hand detections. Processing failures were zero.
+
+## Final test and later results (October 10–12, 2026)
+
+The 32,941-video test split (11 signers) was evaluated **once**, on October 12, 2026, under a protocol frozen before any test data were used: 29 systems were fixed in advance and all are reported; nothing was selected or tuned on test. The official checkpoint reproduces the PoET paper's test Top-1 (73.54%) to within 0.02 points, which checks the data and pose pipeline. Validation drops of 7–10 points to test are expected because validation was used repeatedly for development.
+
+| System | Validation Top-1 | Test Top-1 | Test Top-5 | Test Macro Top-1 |
+|---|---:|---:|---:|---:|
+| Cosine kNN, k=5 (original settings) | 18.68% | 15.52% | 30.67% | 15.61% |
+| Linear SVM, C=0.01 (original settings) | 38.76% | 30.93% | 52.23% | 31.06% |
+| Restricted Random Forest (original settings) | 16.31% | 12.54% | 30.10% | 12.56% |
+| Official PoET checkpoint | 80.94% | 73.56% | 92.60% | 73.54% |
+| Official PoET + mirror test-time augmentation | 82.25% | 74.72% | 93.34% | 74.72% |
+| B, mean of 3 seeds | 81.19% | 73.45% | 92.47% | — |
+| B+R, mean of 3 seeds | 81.52% | 73.87% | 92.47% | — |
+| G, mean of 3 seeds | 81.47% | 73.76% | 92.61% | — |
+| G+R, mean of 3 seeds | 81.74% | 74.18% | 92.61% | — |
+
+On test, G+R improves on B by **+0.74 points** (3-seed t interval [+0.54, +0.93]; bootstrap over the 11 test signers [+0.58, +0.89]); G, R and G+R are positive for all three seeds. Mirror test-time augmentation (averaging the official model's outputs on the original and horizontally flipped video) adds +1.17 points and helps all 11 test signers.
+
+<!-- BEGIN SOLUTION results-2026-10 -->
+### Classical follow-ups: hand normalization, tuning, and representation
+
+- **Left/right-hand normalization (Oct 10).** A label-free rule mirrors every clip of a signer whose clips are mostly left-hand-dominant (hand coverage and wrist motion, decided per signer from unlabeled features). It mirrored 2 of 6 validation and 3 of 11 test signers.
+- **Bounded tuning on validation (Oct 11).** A preregistered 20-point grid; one setting per method selected by validation macro Top-1.
+- **Representation vs classifier (Oct 11).** The same three classifiers (original settings) on PoET's 128-D CLS embedding, the input of PoET's own linear classification head.
+
+| System | Validation Top-1 | Test Top-1 |
+|---|---:|---:|
+| kNN / SVM / RF, normalized descriptor, original settings | 20.23% / 43.87% / 17.94% | 16.15% / 35.76% / 14.84% |
+| kNN k=10 similarity / SVM C=0.03 / RF 64 trees, 4,096 leaves, no depth limit — normalized descriptor | 20.53% / 52.47% / 35.55% | 16.34% / **42.52%** / 28.22% |
+| Same tuned settings, original descriptor | 18.97% / 47.03% / 32.39% | 15.52% / 37.32% / 24.84% |
+| kNN / SVM / RF on PoET 128-D CLS | 79.16% / 69.91% / 25.84% | 71.94% / 64.11% / 20.93% |
+
+On test, normalization adds +4.84 points for the SVM (+13.8 on the three mirrored signers, +1.5 on the others) and tuning a further +6.76; the forest gains +13.4 from a larger leaf budget; kNN barely changes. The best classical system (42.52%) remains 31 points below the official PoET. Holding the classifier fixed, swapping the hand-crafted descriptor for PoET's CLS embedding closes about 75% of that gap for the SVM and 97% for kNN: the representation, not the classifier, is the main difference.
+<!-- END SOLUTION -->
+
+Member experiments (docs/roles) revisit some of these follow-ups; their detailed results are shared after each member's investigation.
 
 ## Four-system comparison
 
@@ -79,4 +116,4 @@ Source: [error_overlap.csv](../results/error_overlap.csv), with six aggregate me
 
 The export checks that correct counts reproduce Top-1/Top-5 percentages, that each aggregate overlap table sums to its denominator, and that no private absolute paths or per-video identifiers were copied. It does not rerun models or repeat the earlier full evidence audits.
 
-Final test evaluation, a common end-to-end cost benchmark, team review, and each member's actual contribution still need to be completed or recorded. Existing code and results prepared in advance do not establish that another team member has already performed that work. See [EXPERIMENT_PROTOCOL.md](EXPERIMENT_PROTOCOL.md) before extending the comparison.
+The final test was evaluated on October 12, 2026 (section above). A common end-to-end cost benchmark, team review, and each member's actual contribution still need to be completed or recorded. Existing code and results prepared in advance do not establish that another team member has already performed that work. See [EXPERIMENT_PROTOCOL.md](EXPERIMENT_PROTOCOL.md) before extending the comparison.

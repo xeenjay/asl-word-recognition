@@ -14,6 +14,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
+from team import reference
 from team.runner import (calculate_metrics, load_dataset, run_experiment, sha256,
                          validate_predictions, write_json)
 
@@ -72,10 +73,16 @@ class TeamRunnerTests(unittest.TestCase):
             params = {"n_estimators": 4, "min_samples_leaf": 1} if method == "random_forest" else {}
             write_json(config, {"method": method, "parameters": params})
             results = {}
+            # The student files are exercises, so patch in a reference-delegating
+            # student to test the runner's delegation tracking on its own.
+            module = importlib.import_module("students." + method)
+            delegate = {"fit": lambda X, y, n, cfg, m=method: reference.fit(m, X, y, n, cfg),
+                        "predict_topk": reference.predict_topk, "IMPLEMENTATION_STATUS": "reference_delegate"}
             for implementation in ("reference", "student"):
                 output = self.root / (method + "-" + implementation)
-                result = run_experiment(method=method, implementation=implementation,
-                                        data_dir=self.data, config_path=config, output_dir=output)
+                with patch.multiple(module, **delegate):
+                    result = run_experiment(method=method, implementation=implementation,
+                                            data_dir=self.data, config_path=config, output_dir=output)
                 self.assertEqual(result["status"], "completed")
                 self.assertTrue(result["model_reload_exact"])
                 expected = "reference" if implementation == "reference" else "student_reference_delegate"

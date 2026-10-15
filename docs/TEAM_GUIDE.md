@@ -2,7 +2,7 @@
 
 [Home](../README.md) · [Setup](SETUP.md) · [Methods](METHODS.md) · [Results](RESULTS.md)
 
-Start with a reference on a small real dataset, understand its behavior, then replace the student template with code you can explain. kNN, Linear SVM, and Random Forest are available choices, not assignments to particular people. The team is Xinjie Huang, Duncan Stadler, Leyun Kim, and Ming Chen; agree on ownership together.
+Start with a reference on a small real dataset, understand its behavior, then write the student version yourself. Each of three members owns one method — Member 1 kNN, Member 2 Linear SVM, Member 3 random forest — with a step-by-step guide in [docs/roles](roles/README.md). The team is Xinjie Huang, Duncan Stadler, Leyun Kim, and Ming Chen; the team decides who takes which role.
 
 ## The normal workflow
 
@@ -10,10 +10,10 @@ Start with a reference on a small real dataset, understand its behavior, then re
 2. Read the official data terms and, if you accept, run the mini preparation described in [Setup](SETUP.md). It obtains up to 80 official clips and extracts local numeric features.
 3. Run your method with `--implementation reference`. Read its metrics and class-level outputs.
 4. Read [Methods](METHODS.md), `configs/<method>.json`, and the reference in `scripts/classical_models.py`.
-5. Edit `students/<method>.py`, then run with `--implementation student` and a new output directory.
+5. Fill in the TODOs in `students/<method>.py` (your guide in [docs/roles](roles/README.md) says which), check them with your self-check test, then run with `--implementation student` and a new output directory.
 6. Compare the same data/configuration, explain discrepancies, and record the work you actually completed.
 
-Once features exist, method runs do not download videos or repeat landmark extraction. If you are not ready to implement the method, use the reference to learn. The initial student template also delegates to reference; provenance records this honestly. Using a library may be appropriate, but credit its implementation and identify your adaptation and analysis.
+Once features exist, method runs do not download videos or repeat landmark extraction. Until your TODOs are done, `--implementation student` stops with `NotImplementedError`; use the reference to learn in the meantime. The run record states whether a student run called the reference. Using a library may be appropriate, but credit its implementation and identify your adaptation and analysis.
 
 ## Student interface
 
@@ -47,7 +47,7 @@ The runner owns common preprocessing, checks, metrics, and output records. The s
 
 Keep the same feature directory and config. Compare row counts, label order, Top-1/Top-5/macro metrics, per-class changes, and a few disagreeing predictions. Check whether tie rules, candidate counts, or algorithm settings changed, and whether the student still calls reference.
 
-A score difference may indicate a bug or an intentional method difference. Explain which it is. An unchanged template demonstrates the interface and environment; it does not show an independently implemented algorithm.
+A score difference may indicate a bug or an intentional method difference. Explain which it is. Passing the self-check tests shows the code meets its contract; your notes should still explain how it works and why any difference from the reference appears.
 
 JSON accuracy fields use proportions from 0 to 1; terminal output uses percentages. Additional helper files you import are not automatically included in the runner's selected-source hash list, so record their commits/files in your contribution evidence too.
 

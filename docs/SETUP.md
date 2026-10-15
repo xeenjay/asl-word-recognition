@@ -9,8 +9,8 @@ Commands run from the repository root. The default workflow obtains a small offi
 Accept the invitation and authenticate with your own GitHub account:
 
 ```bash
-git clone https://github.com/huiliyi-XJ/asl-word-recognition.git
-cd asl-word-recognition
+git clone https://github.com/huiliyi-XJ/asl-word-recognition-team.git
+cd asl-word-recognition-team
 ```
 
 Alternatively, sign in and use **Code → Download ZIP**, extract it, and open a terminal in the top-level folder. The local workflow does not require Git history. A private ZIP still requires repository access.
@@ -69,13 +69,13 @@ A partial configuration merges with the method defaults. Inspect the saved outpu
 
 ## 5. Edit and run your student module
 
-Edit the corresponding file in `students/`, then:
+Fill in the TODOs of your file in `students/` (see [docs/roles](roles/README.md)) and run your self-check test, then:
 
 ```bash
 python run.py --method knn --implementation student --data data/classical-mini --output outputs/knn-student
 ```
 
-For the other methods, replace `knn` with `linear_svm` or `random_forest`. Templates initially call the reference implementation. Provenance records that delegation; an unchanged template is not an independent implementation.
+For the other methods, replace `knn` with `linear_svm` or `random_forest`. Until the TODOs are filled in, the student run stops with `NotImplementedError`; provenance records whether a student run called the reference.
 
 The runner fits StandardScaler on training rows only and passes standardized X to both reference and student methods. Do not fit preprocessing on validation. [Team guide](TEAM_GUIDE.md) describes `fit` and `predict_topk`.
 

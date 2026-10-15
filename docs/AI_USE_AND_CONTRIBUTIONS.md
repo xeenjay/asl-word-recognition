@@ -52,3 +52,19 @@ See [workflow verification](WORKFLOW_VERIFICATION.json) for the actual checks.
 组员工作入口、下载/预处理、运行器和模板由 agent 按用户要求协助准备。本轮确实做了
 80 条真实视频的小规模流程验收及三方法参考/模板运行，与上面的早期写作工作区分。
 不能把这些 agent 检查写成某位组员已经完成的实现、实验或人工审核。
+
+## Teaching exercises update — October 15, 2026
+
+Xinjie asked for a complete version for their own use and a teaching version that tells
+each of three members which files to own, what to learn, and which code to fill
+in. An agent (Claude) wrote, at Xinjie's request: the three from-scratch
+exercise files and their answer key (`students/knn.py`, `students/linear_svm.py`,
+`students/random_forest.py`), the TODO H1–H3 exercise in the ported
+`scripts/classical_handedness.py`, the self-check tests `tests/test_member*.py`,
+the role guides and notes templates in `docs/roles/`, and the generator that
+produces the members' repository with the answers removed. The answer key
+reproduces the reference exactly for kNN, matches `LinearSVC` weights to about
+1e-4 relative difference at C=0.01, and gives a forest with 55–65% Top-1 on the
+mini data across seeds (reference 60%). This framework and the answers are not
+contributions of the other members; members' contributions start with their own
+code, notes, experiments, and writing.

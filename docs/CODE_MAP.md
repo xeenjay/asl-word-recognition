@@ -12,9 +12,9 @@ The main team workflow separates one-time real-data preparation from classifier 
 | `run.py` | Choose data/method/implementation/config, fit common preprocessing, evaluate, and record outputs |
 | `team/runner.py` | Data/config validation, train-only scaling, student dispatch, metrics, reload checks, and provenance |
 | `team/reference.py` | Thin adapter to the shared reference classifiers, with delegation tracking |
-| `students/knn.py` | Editable kNN interface; initially a labeled reference delegate |
-| `students/linear_svm.py` | Editable SVM interface |
-| `students/random_forest.py` | Editable Random Forest interface |
+| `students/knn.py` | Member 1 exercise: cosine kNN in NumPy (TODO 1–5) |
+| `students/linear_svm.py` | Member 2 exercise: one-vs-rest squared-hinge linear SVM (TODO 1–4) |
+| `students/random_forest.py` | Member 3 exercise: CART trees and a bootstrap forest (TODO 1–5) |
 | `configs/<method>.json` | Method name and algorithm parameters |
 | `scripts/classical_models.py` | Existing reference models, ranking, scaler utilities, and serialization |
 | `scripts/classical_features.py` | Raw body/hand coordinates → a 1,020-dimensional clip descriptor |
@@ -25,7 +25,7 @@ The main team workflow separates one-time real-data preparation from classifier 
 
 The student contract is `fit(X_train, y_train, num_classes, config)` and `predict_topk(model, X, top_k)`. The runner has already standardized X using train-only statistics. [Team guide](TEAM_GUIDE.md) gives the required candidate-ID/score/mask return format.
 
-An unchanged student module delegates to reference, and run provenance records that fact. `--implementation student` alone does not imply an independent algorithm.
+Each student module states its status in `IMPLEMENTATION_STATUS`/`IMPLEMENTATION_NOTE`, and run provenance records any reference calls. Member guides and self-check tests: [docs/roles](roles/README.md), `tests/test_member*.py`. Member 2's extension lives in `scripts/classical_handedness.py` (TODO H1–H3).
 
 JSON configs wrap parameters under `parameters`; the student `fit` function receives only the resolved parameter dictionary. The runner's JSON accuracy values are 0–1 proportions, while the CLI prints percentages.
 
@@ -73,7 +73,7 @@ Use [Third-party sources](THIRD_PARTY.md) and [Experiment protocol](EXPERIMENT_P
 `tests/` covers numerical behavior and contracts. Some fixtures are synthetic; optional PoET/GPU tests may need assets. A skip is not successful model inference. Actual new-workflow acceptance is recorded in [Status](STATUS.md); archived checks do not establish that newly changed code passed.
 
 - Mini scores and full-vocabulary scores describe different tasks.
-- Reported archived project scores are validation, not final test.
+- Archived project scores are validation unless labeled as test; the one-shot final test (October 12, 2026) is in [Results](RESULTS.md).
 - PoET's learned-embedding retrieval is different from handcrafted-feature kNN.
 - Geometry uses shared image x/y, not recovered metric 3D.
 - An upstream docstring mentions 194 values, but the pinned PoET input implementation produces 188 coordinates (94 x/y landmarks).
