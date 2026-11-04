@@ -13,7 +13,7 @@
 先接受私有仓库邀请，用自己的 GitHub 账号认证。也可以登录网页后 **Code → Download ZIP**，解压并进入项目目录运行。
 
 ```bash
-git clone https://github.com/huiliyi-XJ/asl-word-recognition-team.git
+git clone https://github.com/xeenjay/asl-word-recognition-team.git
 cd asl-word-recognition-team
 python3.10 -m venv .venv
 source .venv/bin/activate

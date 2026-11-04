@@ -41,7 +41,7 @@ The task is isolated-word classification on ASL Citizen: one presegmented clip m
 |---|---:|---|
 | Train | 40,154 | Fit models, fit preprocessing statistics, and build retrieval memory |
 | Validation | 10,304 | Development, hyperparameter choices, and checkpoint selection |
-| Test | 32,941 | Reserved final evaluation after the team freezes its methods |
+| Test | 32,941 | One-shot final evaluation, completed on October 12, 2026 after the methods were frozen; not used for development |
 
 Use the official signer-disjoint splits. Keep every frame, crop, augmentation, and cached feature from a video in that video's split. Do not create frame-level random train/validation splits. Standardization, class weights, feature normalization statistics, and retrieval reference banks must be fitted from training data only.
 
@@ -109,8 +109,10 @@ Measure model-only latency separately from end-to-end video decoding and pose ex
 
 Raw run records can contain private paths and participant-level data. Share only approved artifacts; the committed result summaries use an explicit field allowlist and source hashes rather than copying complete logs or per-video records.
 
-## Final test handoff
+## Final test evaluation (completed October 12, 2026)
 
-Before evaluating test, the team must record its final methods, checkpoints, seeds, preprocessing, fusion settings, metrics, and failure policy. Perform final evaluation without using test errors or scores to select models, tune thresholds, choose epochs, or select seeds. If an evaluation implementation error is discovered, record the cause and apply a justified common correction consistently; do not use it as an opportunity for test-driven method changes.
+The test split was evaluated once, on October 12, 2026. Before any test data were used, the final methods, checkpoints, seeds, preprocessing, fusion settings, metrics, and failure policy were fixed, and every preregistered system is reported in [Results](RESULTS.md). Test errors and scores were not used to select models, tune thresholds, choose epochs, or select seeds.
 
-Until that evaluation is completed, all current numerical findings must remain labeled **validation**. Team members must be able to explain the methods and results they present, document their actual contributions, and retain a record of AI assistance consistent with course requirements.
+No further test evaluation is planned. New team experiments, including the member investigations, use train and validation only. Do not tune on, re-evaluate, or select anything using the published test numbers. If an evaluation implementation error is discovered, record the cause and apply a justified common correction consistently; do not use it as an opportunity for test-driven method changes.
+
+Label every number with its split. Validation findings stay labeled **validation** even when a test number for the same system exists, and the two must not be averaged or mixed in one comparison. Team members must be able to explain the methods and results they present, document their actual contributions, and retain a record of AI assistance consistent with course requirements.

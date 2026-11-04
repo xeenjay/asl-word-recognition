@@ -22,6 +22,8 @@ The 32,941-video test split (11 signers) was evaluated **once**, on October 12, 
 
 On test, G+R improves on B by **+0.74 points** (3-seed t interval [+0.54, +0.93]; bootstrap over the 11 test signers [+0.58, +0.89]); G, R and G+R are positive for all three seeds. Mirror test-time augmentation (averaging the official model's outputs on the original and horizontally flipped video) adds +1.17 points and helps all 11 test signers.
 
+**Evidence for the October 10–12 numbers.** Unlike the validation tables below, these test and follow-up numbers are transcribed on this page only. This repository has no CSV, `results/summary.json` entry, or source hash for them. That export dates from October 4 and contains validation results only. Cite this page for these numbers and do not present them as verifiable from the committed result files.
+
 <!-- BEGIN SOLUTION results-2026-10 -->
 ### Classical follow-ups: hand normalization, tuning, and representation
 

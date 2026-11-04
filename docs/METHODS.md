@@ -8,7 +8,7 @@ This guide explains the implemented reference methods and the questions their co
 
 An input is a presegmented ASL Citizen clip containing one labeled sign. The prediction is a class from the fixed 2,731-label vocabulary. The system does not identify word boundaries, translate a sentence, or validate that an arbitrary upload belongs to the vocabulary.
 
-The official splits contain 40,154 training, 10,304 validation, and 32,941 test clips, with no signer shared between splits. Training supplies model fitting, dataset-level statistics, and retrieval references. Validation supports development and checkpoint selection. Test has not been evaluated.
+The official splits contain 40,154 training, 10,304 validation, and 32,941 test clips, with no signer shared between splits. Training supplies model fitting, dataset-level statistics, and retrieval references. Validation supports development and checkpoint selection. Test was evaluated once, on October 12, 2026, after the compared systems were frozen under a preregistered protocol; it was never used for development or tuning (see [Results](RESULTS.md)). Unless labeled as test, the numbers in this guide are validation results.
 
 MediaPipe extracts landmarks from the video. Raw detections support both classical and neural processing, but the final representations differ. Presence masks distinguish missing detections from valid coordinates equal to zero. The seven validation clips with no detected hands remain in all reported denominators. Producing a valid cache record does not imply that all landmarks are accurate or the sign is recognized correctly.
 

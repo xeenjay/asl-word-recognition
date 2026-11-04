@@ -2,7 +2,10 @@
   "schema_version": 1,
   "export_date": "2026-10-04",
   "split": "validation",
-  "test_evaluated": false,
+  "test_evaluated": true,
+  "test_evaluation_date": "2026-10-12",
+  "test_results_in_this_export": false,
+  "test_results_documented_in": "docs/RESULTS.md",
   "cohorts": {
     "train": 40154,
     "validation": 10304,
@@ -757,7 +760,7 @@
     }
   },
   "interpretation_limits": [
-    "All reported scores use development validation; final test has not been evaluated.",
+    "All scores in this 2026-10-04 export use development validation. The one-shot final test was evaluated later, on 2026-10-12; its results are documented in docs/RESULTS.md and are not part of this export.",
     "System comparison changes representation, pretraining and development budget as well as classifier.",
     "Seed 20260922 was used during development; all seeds select checkpoints on the same validation set.",
     "Seed SD is descriptive, not a confidence interval or a statistical significance claim.",

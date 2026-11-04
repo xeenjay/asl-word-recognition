@@ -9,7 +9,7 @@ The three classical methods — **kNN**, **Linear SVM**, and **Random Forest** �
 **Start here: [Member tasks](docs/roles/README.md)** — what each role learns, writes, tests, investigates, and reports, with a suggested schedule.
 
 <!-- BEGIN SOLUTION instructor -->
-> **Answer-key repository (Xinjie only).** This is `huiliyi-XJ/asl-word-recognition`, which contains the answers. Members use the generated teaching repository `asl-word-recognition-team`; see [teaching/README.md](teaching/README.md). Do not invite members here.
+> **Answer-key repository (Xinjie only).** This is `xeenjay/asl-word-recognition`, which contains the answers. Members use the generated teaching repository `asl-word-recognition-team`; see [teaching/README.md](teaching/README.md). Do not invite members here.
 <!-- END SOLUTION -->
 
 ## Quick start
@@ -17,7 +17,7 @@ The three classical methods — **kNN**, **Linear SVM**, and **Random Forest** �
 Accept the private repository invitation and authenticate GitHub with your own account. You can clone it or sign in and choose **Code → Download ZIP**. A ZIP copy runs locally too.
 
 ```bash
-git clone https://github.com/huiliyi-XJ/asl-word-recognition-team.git
+git clone https://github.com/xeenjay/asl-word-recognition-team.git
 cd asl-word-recognition-team
 python3.10 -m venv .venv
 source .venv/bin/activate

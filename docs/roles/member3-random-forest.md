@@ -63,6 +63,8 @@ The two forests use different random numbers, so do not expect identical predict
 
 **D3 — full data (Xinjie runs it).** Write your predictions first (validation Top-1 of the original forest and of a forest with 4,096 leaves and no depth limit), then interpret the real numbers.
 
+Unlike kNN and SVM, your own forest is not run on the full data: recursive NumPy trees are far too slow for 40,154 clips × 2,731 classes. The full-data forests are scikit-learn's. The original setting runs through `run.py --implementation reference`. The 4,096-leaf forest with no depth limit is outside the teaching runner's reference limits (integer `max_depth`, bounded tree storage), so it comes from the research pipeline instead. Your forest is checked on mini (Parts B–D1), and your full-data contribution is the analysis.
+
 <!-- BEGIN SOLUTION results-2026-10 -->
 **Full-data results (2,731 words; 10,304 validation clips, 32,941 test clips).** The tuned forest is scikit-learn's with 64 trees, at most 4,096 leaves and no depth limit.
 

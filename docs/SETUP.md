@@ -9,7 +9,7 @@ Commands run from the repository root. The default workflow obtains a small offi
 Accept the invitation and authenticate with your own GitHub account:
 
 ```bash
-git clone https://github.com/huiliyi-XJ/asl-word-recognition-team.git
+git clone https://github.com/xeenjay/asl-word-recognition-team.git
 cd asl-word-recognition-team
 ```
 

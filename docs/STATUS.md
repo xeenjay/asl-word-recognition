@@ -39,7 +39,7 @@ The new workflow was checked on **macOS arm64 with Python 3.10.18**. A fresh rep
 | Repeat preparation | Rerunning preparation verified and reused the cache |
 | Independent implementation contract | A custom nearest-centroid unit test passed without reference delegation; this is a software check, not a member contribution |
 
-This verifies the download components and the real-data extraction/classifier workflow separately. **It does not constitute a fresh-machine download of all 80 videos**: the extraction check reused 80 existing local video files. The new full profile was not run, Linux/Windows have not been verified on those platforms, and skipped optional checks do not establish PoET/GPU inference. No final-test evaluation was performed.
+This verifies the download components and the real-data extraction/classifier workflow separately. **It does not constitute a fresh-machine download of all 80 videos**: the extraction check reused 80 existing local video files. The new full profile was not run, Linux/Windows have not been verified on those platforms, and skipped optional checks do not establish PoET/GPU inference. This workflow verification performed no test evaluation; the one-shot final test came later, on October 12 ([Results](RESULTS.md)).
 
 ## Archived research already completed
 

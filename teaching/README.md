@@ -6,7 +6,7 @@
 
 | | 完整版（本仓库） | 教学版 |
 | --- | --- | --- |
-| GitHub | `huiliyi-XJ/asl-word-recognition`（私有，只有你） | 建议 `huiliyi-XJ/asl-word-recognition-team`（私有，只邀请组员） |
+| GitHub | `xeenjay/asl-word-recognition`（私有，只有你） | `xeenjay/asl-word-recognition-team`（私有，只邀请组员） |
 | 本地 | `project/asl-team-repo/` | `project/asl-team-teaching/` |
 | 内容 | 全部答案、讲师说明、完整结果 | 由脚本生成：TODO、提示、自查测试、任务说明 |
 | git 历史 | 本仓库自己的历史 | 独立的新历史，从未包含答案 |
@@ -58,7 +58,9 @@ git push
 组员只在 10 类 mini 数据上开发。代码通过自查测试后，由你拉取他们的分支，在完整 train/validation 数据上运行，然后把 `metrics.json`、`per_class.json` 发给他们分析。对外不写具体机器信息。
 
 - kNN、SVM 的自写版本可以直接跑完整数据：SVM 是 L-BFGS，约 280 万个参数。
-- 自写 RF 是纯 Python 递归，在 4 万条 × 2,731 类上太慢。成员 3 的完整数据结果用 reference（sklearn）配置跑，这一点在任务说明里已经写明。
+- 自写 RF 是纯 Python 递归，在 4 万条 × 2,731 类上太慢。成员 3 的完整数据结果用 sklearn 跑，任务说明 D3 里已经写明。
+  - 原始配置（64 棵树、深度 12、256 叶子）可以直接用 `run.py --implementation reference` 跑。
+  - 调优配置（4,096 叶子、不限深度）**不能**用 `run.py` 跑：reference 只接受正整数 `max_depth`，而且 `forest_memory_upper_bound` 超过 2 GiB 就拒绝（这个配置的估算约 10.7 GiB，实际训练约 37 GB 内存）。RESULTS 里的调优 RF 数字来自 10 月 11 日的研究流水线，不是教学 runner。
 
 ## 贡献记录
 
