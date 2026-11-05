@@ -68,3 +68,15 @@ reproduces the reference exactly for kNN, matches `LinearSVC` weights to about
 mini data across seeds (reference 60%). This framework and the answers are not
 contributions of the other members; members' contributions start with their own
 code, notes, experiments, and writing.
+
+## Report update — November 5, 2026
+
+At Xinjie's request, an agent (Claude) added the one-shot final test of
+October 12 and the October 10–12 follow-up experiments to `reports/report-en.md`
+and `reports/report-zh.md`. It also corrected stale repository URLs and
+test-status statements in the documentation. All numbers were transcribed from
+`docs/RESULTS.md` and the results sections of the member guides; no experiment,
+training run, or test evaluation was performed for this update. The classical
+follow-up results stay hidden in the teaching version until they are released.
+The members' method subsections were not written for them, and Xinjie still has
+to review the updated report before submission.

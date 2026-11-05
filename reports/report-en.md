@@ -1,12 +1,12 @@
 # Comparing Classical Pose Descriptors and a Lightweight Transformer for Isolated ASL Recognition
 
-> Team learning copy of the October 4 working report. Original video-frame Figure 4 is omitted from Git; the dataset videos and gallery remain separate assets. All results below refer to the original experiments, not a fresh run of this export.
+> Team copy of the working report. First written October 4, 2026; updated November 5, 2026 with the one-shot final test of October 12 and the later follow-up experiments. Original video-frame Figure 4 is omitted from Git; the dataset videos and gallery remain separate assets. All results below refer to the original experiments, not a fresh run of this export.
 
-**EN.601.661 Computer Vision · October 4, 2026**
+**EN.601.661 Computer Vision · Draft final report, November 5, 2026**
 **Prepared by Xinjie Huang with agent assistance**
 Project team: Xinjie Huang, Duncan Stadler, Leyun Kim, and Ming Chen
 
-**Version scope.** This report documents completed experiments on the official ASL Citizen training and validation splits. It contains no final-test results. The contribution statement describes the preparation of this version; the team's final individual contributions have not yet been consolidated.
+**Version scope.** This draft reports development experiments on the official ASL Citizen training and validation splits and the one-shot evaluation of the reserved test split on October 12, 2026. Validation supported development and selection; test was evaluated once, for systems fixed in advance. The two are always reported separately. The members' own method subsections are still to be added, and the contribution statement does not yet record the team's final individual contributions.
 
 ## 1. Introduction
 
@@ -14,23 +14,27 @@ Recognizing a sign from a video is useful for a dictionary interface: a user dem
 
 ASL Citizen provides a practical setting for this question. Desai et al. introduced a community-sourced dataset with 83,399 consented videos from 52 signers, recorded in varied environments [1]. Its official splits separate signers, making recognition of previously unseen people a central challenge. The dataset paper motivates sign-to-dictionary retrieval and evaluates both appearance-based and pose-based systems. PoET, proposed by Lascar et al., uses normalized keypoint sequences and a compact Transformer encoder for isolated recognition [2]. Its public implementation and trained ASL Citizen weights make it possible to study adaptation around an existing recognizer without collecting or annotating new videos [3].
 
-This project asks three questions. First, how well do simple classifiers perform when given the same fixed pose-and-motion descriptor? Second, how do these systems compare with a pretrained sequence model on the same validation videos? Third, can a small relative-geometry branch and a fixed training-example retrieval rule improve a budget-matched PoET baseline? These questions distinguish an educational system comparison from a controlled study of modifications to one model.
+This project asks three questions. First, how well do simple classifiers perform when given the same fixed pose-and-motion descriptor? Second, how do these systems compare with a pretrained sequence model on the same validation videos? Third, can a small relative-geometry branch and a fixed training-example retrieval rule improve a budget-matched PoET baseline? These questions distinguish an educational system comparison from a controlled study of modifications to one model. After development, a single evaluation on the reserved test split checks which validation findings hold for unseen signers.
 
-The completed work includes a shared data and evaluation pipeline; k-nearest neighbors (kNN), linear support vector machine (SVM), and bounded random forest baselines; deployment of the official PoET checkpoint; matched fine-tuning and geometry/retrieval ablations; and a video demonstration with quantitative and qualitative error analysis. The contribution is the adaptation, implementation, controlled comparison, and interpretation of these components. It does not include inventing kNN, SVM, random forests, MediaPipe, or PoET. All reported project scores use validation data, which has also supported development and checkpoint selection.
+<!-- BEGIN SOLUTION results-2026-10 -->
+Follow-up experiments then ask why the classical baselines are weak: how much is due to left/right-hand variation between signers and to the bounded original settings, and how much to the descriptor itself.
+<!-- END SOLUTION -->
+
+The completed work includes a shared data and evaluation pipeline; k-nearest neighbors (kNN), linear support vector machine (SVM), and bounded random forest baselines; deployment of the official PoET checkpoint; matched fine-tuning and geometry/retrieval ablations; mirror test-time augmentation for the official checkpoint; a one-shot final test evaluation; and a video demonstration with quantitative and qualitative error analysis. The contribution is the adaptation, implementation, controlled comparison, and interpretation of these components. It does not include inventing kNN, SVM, random forests, MediaPipe, or PoET. Validation data supported development and checkpoint selection; test results come from the single October 12 evaluation and are labeled as such.
 
 ## 2. Methods
 
 ### 2.1 Data, preprocessing, and evaluation
 
-We retain the official ASL Citizen vocabulary and signer-disjoint partitions [1]. Table 1 gives the exact split sizes from the supplied metadata. The complete training and validation videos and pose caches were prepared. The test metadata is available, but the test videos have not been prepared or evaluated in this version. No new manual annotations were created, and no difficult validation examples were removed.
+We retain the official ASL Citizen vocabulary and signer-disjoint partitions [1]. Table 1 gives the exact split sizes from the supplied metadata. The complete training and validation videos and pose caches were prepared for development. The test videos were used only for the one-shot final evaluation on October 12, 2026. Its protocol was frozen before any test data were used: 29 systems were fixed in advance and all are reported, and nothing was selected or tuned on test. No new manual annotations were created, and no difficult validation examples were removed.
 
 **Table 1. Official ASL Citizen partitions and their use in this report.**
 
 | Split | Videos | Signers | Use |
 | --- | ---: | ---: | --- |
 | Training | 40,154 | 35 | Fit classifiers, fine-tune PoET, build retrieval banks |
-| Validation | 10,304 | 6 | Development, checkpoint selection, and all reported results |
-| Test | 32,941 | 11 | Reserved; no results reported |
+| Validation | 10,304 | 6 | Development, checkpoint and hyperparameter selection; validation results |
+| Test | 32,941 | 11 | One-shot final evaluation (October 12, 2026) |
 | Total | 83,399 | 52 | 2,731 labels |
 
 MediaPipe supplies pretrained body, face, and hand landmark extraction [4]. The same stored raw detections support the classical and neural pipelines, although their representations differ. Presence masks distinguish absent landmarks from valid zero coordinates. Extraction success means that the pipeline produced a usable record; it does not mean that the word was recognized correctly or that every landmark is accurate. Seven validation clips have no hand detections throughout the video; they remain in the denominator.
@@ -63,13 +67,27 @@ The residual enters before the Transformer, allowing geometry to affect subseque
 
 For matched B/G comparisons, seeds 20260922, 20260923, and 20260924 each start from the same official checkpoint. Every run uses all training videos for 10 epochs, batch size 128, and 3,140 optimizer steps. AdamW uses weight decay 0.01 and a fixed learning rate of 0.00003 for the original network; the new geometry branch uses 0.0003. All original layers remain trainable. Runs use FP32 and the same recorded temporal-sampling and class-weighted cross-entropy rules, with class weight w_c = 1 - n_c / N (n_c is the training count for class c, N the total), without added spatial augmentation. The best checkpoint is selected by complete-validation macro Top-1, including epoch zero and retaining the earlier checkpoint on ties. The first seed informed earlier development; the later seeds therefore provide additional repeatability evidence, not a new held-out dataset.
 
-### 2.4 Fixed retrieval and the demonstration
+### 2.4 Fixed retrieval, mirror test-time augmentation, and the demonstration
 
 R is a postprocessing rule that uses each checkpoint's own 128-dimensional CLS embeddings. It is distinct from classical kNN on hand-engineered descriptors. Each B or G checkpoint encodes all training examples to create its own labeled bank. For an L2-normalized query q and reference z, the kernel is **K(q,z) = exp[−10 × (1 − q·z)]**. Within a candidate class, kernel values are first averaged within each training signer and then averaged across that class's signers. This limits domination by a signer with more references.
 
 Only the model's original five candidate classes are reranked. The five logits are converted to a conditional softmax distribution, and the five retrieval scores are normalized across those candidates. The final score is **0.75 × model probability + 0.25 × retrieval probability**. This fixed rule changes ordering without adding candidates, so Top-5 membership and hit rate remain identical to the corresponding B or G model. The query's true label is never used. The factorial comparison reuses six existing checkpoints and performs no further parameter updates.
 
+Mirror test-time augmentation (TTA) is a second training-free rule, applied only to the official checkpoint. The model is run on the original clip and on its horizontal mirror, and the two outputs are averaged. It uses no label, and it was one of the systems fixed before the test evaluation. It was not combined with B, G, or R.
+
 The accompanying browser demonstration accepts a presegmented video, extracts landmarks once, and runs kNN, SVM, forest, official PoET, and one fixed G+R checkpoint. Saved validation examples are separated from fresh inference, and uploaded clips without labels do not receive an accuracy claim. Displayed scores have method-specific meanings: votes, margins, tree estimates, and softmax-derived values are not interchangeable calibrated confidence measures. The demo is an offline clip recognizer; no end-to-end streaming performance claim is made.
+
+<!-- BEGIN SOLUTION results-2026-10 -->
+### 2.5 Classical follow-ups: hand normalization, bounded tuning, and representation
+
+Three follow-up experiments (October 10–11) revisit the classical baselines. They were among the 29 systems fixed before the test evaluation.
+
+*Left/right-hand normalization.* The descriptor stores each hand in fixed slots, so a left-hand-dominant signer produces vectors unlike those of most right-hand-dominant training signers. A label-free rule decides per signer. For each clip, it checks whether the left hand is validly detected in a larger fraction of frames than the right, and whether the left wrist moves more than the right relative to the shoulder center. If both the share of a signer's clips with left-dominant coverage and the share with left-dominant motion exceed one half, every clip of that signer is mirrored. Mirroring maps x to 1 − x, swaps the two hands, and swaps the left/right body landmarks. For this descriptor it is an exact signed permutation of the 1,020 values. The rule reads only unlabeled descriptor values and the signer ID, never a gloss, prediction, or score. For validation and test signers it uses that signer's own unlabeled clips.
+
+*Bounded tuning.* A preregistered 20-point grid over the three methods was evaluated on validation with the normalized descriptor, and one setting per method was selected by validation macro Top-1. The selected settings are kNN with k = 10 and similarity-weighted votes, SVM with C = 0.03, and a 64-tree forest with at most 4,096 leaves and no depth limit.
+
+*Representation swap.* The three classifiers, with their original settings, are also trained on PoET's 128-dimensional CLS embedding, the input of PoET's own linear classification head. Holding the classifier fixed while changing the input separates the effect of the representation from that of the classifier.
+<!-- END SOLUTION -->
 
 ## 3. Results
 
@@ -130,31 +148,94 @@ Performance also varies across observational slices. Excluding the signer with o
 
 Original image panels are not included in this code repository.
 
+### 3.4 One-shot final test (October 12, 2026)
+
+Table 5 gives the test results for the four original systems, mirror TTA, and the matched PoET ablation. Each test score comes from a single evaluation of a system fixed in advance; validation scores are repeated for comparison. The official checkpoint reaches 73.56% test Top-1, within 0.02 points of the 73.54% reported for PoET [2]. This agreement checks our data and pose pipeline on the test signers.
+
+**Table 5. Validation and one-shot test results, in percent. B to G+R are means over the three matched seeds; "—" means not reported.**
+
+| System | Validation Top-1 | Test Top-1 | Test Top-5 | Test Macro Top-1 |
+| --- | ---: | ---: | ---: | ---: |
+| Cosine kNN, k = 5 | 18.68 | 15.52 | 30.67 | 15.61 |
+| Linear SVM, C = 0.01 | 38.76 | 30.93 | 52.23 | 31.06 |
+| Bounded random forest | 16.31 | 12.54 | 30.10 | 12.56 |
+| Official PoET checkpoint | 80.94 | 73.56 | 92.60 | 73.54 |
+| Official PoET + mirror TTA | 82.25 | 74.72 | 93.34 | 74.72 |
+| B: fine-tuned PoET | 81.19 | 73.45 | 92.47 | — |
+| B+R | 81.52 | 73.87 | 92.47 | — |
+| G | 81.47 | 73.76 | 92.61 | — |
+| G+R | 81.74 | 74.18 | 92.61 | — |
+
+Every system scores lower on test than on validation. The PoET systems and the SVM lose 7.4–7.8 points; kNN and the bounded forest, starting lower, lose 3.2–3.8 points. Part of the drop is expected, because validation was reused for development and selection, and the test signers are different people. The ranking of the four original systems is unchanged.
+
+The matched gain holds on test. G+R improves on B by 0.74 points (three-seed t interval [+0.54, +0.93]; bootstrap over the 11 test signers [+0.58, +0.89]), and the G, R, and G+R gains over B are positive for all three seeds. As on validation, R leaves Top-5 unchanged. B itself is about 0.1 points below the official checkpoint on test, although it was about 0.25 points above it on validation. Fine-tuning alone, with checkpoints selected on validation, therefore gives no test gain over the official weights.
+
+Mirror TTA adds 1.17 points to the official checkpoint and helps all 11 test signers. Official PoET with TTA has the highest test Top-1 in Table 5 (74.72%), above G+R (74.18%). The two start from different baselines, the official weights versus fine-tuned B, and TTA was not combined with G+R, so this does not show that one modification is better than the other. Because the test split has now been used, a combined system could only be developed and reported on validation.
+
+<!-- BEGIN SOLUTION results-2026-10 -->
+### 3.5 Classical follow-ups
+
+Table 6 reports the follow-ups of Section 2.5. The normalization rule mirrored 2 of the 6 validation signers and 3 of the 11 test signers.
+
+**Table 6. Classical follow-ups, Top-1 in percent (kNN / SVM / RF). "Normalized" is the left/right-normalized descriptor; the tuned settings were selected on validation.**
+
+| System | Validation | Test |
+| --- | ---: | ---: |
+| Original descriptor and settings | 18.68 / 38.76 / 16.31 | 15.52 / 30.93 / 12.54 |
+| Original settings, normalized descriptor | 20.23 / 43.87 / 17.94 | 16.15 / 35.76 / 14.84 |
+| Tuned settings, normalized descriptor | 20.53 / 52.47 / 35.55 | 16.34 / 42.52 / 28.22 |
+| Tuned settings, original descriptor | 18.97 / 47.03 / 32.39 | 15.52 / 37.32 / 24.84 |
+| Original settings on PoET's 128-D CLS embedding | 79.16 / 69.91 / 25.84 | 71.94 / 64.11 / 20.93 |
+
+Normalization helps the SVM most. On test it adds 4.84 points: 13.8 points on the three mirrored signers and only 1.5 points on the other eight. Tuning C, which was best at 0.03 in a validation grid from 0.001 to 0.1, adds a further 6.76 points, to 42.52%. Both steps are significant on test (McNemar p < 1e-130). At C = 0.1, 280 of the 2,731 binary problems had not converged after 2,000 iterations.
+
+The forest gains 13.4 test points from the larger leaf budget (McNemar p < 1e-300). In the original forest, every one of the 64 trees used exactly 256 leaves and reached depth 12. With 4,096 leaves every tree again fills its budget, so this is not the forest's ceiling. The tuned forest needs about 37 GB of memory to train and is 11.5 GB on disk, because every node stores a distribution over all 2,731 classes.
+
+kNN barely changes. All ten validation settings lie between 19.7% and 20.5%, and the selected setting is not significantly better (McNemar p = 0.25).
+
+The best classical system, the tuned SVM on the normalized descriptor, remains 31 points below the official checkpoint on test. With each classifier and its original settings held fixed, replacing the normalized hand-crafted descriptor by PoET's CLS embedding closes about 75% of the SVM's gap to the official checkpoint and about 97% of kNN's. kNN on the CLS embedding reaches 71.94%, only 1.6 points below PoET's own linear head. The original forest gains much less from the better input (20.93%), consistent with its small leaf budget.
+<!-- END SOLUTION -->
+
 ## 4. Discussion
 
 ### 4.1 What the comparisons establish
 
 Under a shared representation, the SVM result suggests that learned discriminative boundaries use the fixed summaries more effectively than our cosine distance or bounded forest. It does not prove that linear SVM is intrinsically superior on every pose representation. The forest reached its leaf budget, and coarse temporal pooling can merge distinct trajectories. Feature audits found finite values, aligned labels, correct training-only standardization, and complete rows. Thus, low scores cannot simply be dismissed as missing input files, but the audits do not establish that every feature design choice is optimal.
 
-PoET provides a much stronger reference system. The matched ablation supports a narrower contribution: explicit image-plane relations and a fixed retrieval rule produce modest, directionally consistent validation gains within the tested budget. The absence of an equal-parameter branch using only the original inputs limits claims that the benefit comes uniquely from new geometry rather than extra capacity. Likewise, standard deviations over three runs measure seed variation under this experiment, not uncertainty over every future signer or dataset.
+<!-- BEGIN SOLUTION results-2026-10 -->
+The follow-ups sharpen this picture. Part of the classical gap to PoET came from avoidable choices: fixed left/right slots in the descriptor, an over-regularized SVM, and a binding leaf budget. Correcting them raises the best classical test score from 30.93% to 42.52%. Most of the remaining gap is due to the representation. With the classifier fixed, PoET's learned embedding does most of the work, and a nearest-neighbor vote on it comes within 1.6 points of PoET's own classifier. The SVM's lead over kNN on the hand-crafted descriptor therefore says more about how each classifier copes with a weak representation than about the classifiers in general.
+<!-- END SOLUTION -->
+
+PoET provides a much stronger reference system. The matched ablation supports a narrower contribution: explicit image-plane relations and a fixed retrieval rule produce modest gains within the tested budget. On validation, the gains were directionally consistent but reused the development data. On the reserved test split they hold: G+R exceeds B by 0.74 points, the gain is positive for every seed, and a signer-level bootstrap interval lies above zero. The absence of an equal-parameter branch using only the original inputs still limits claims that the benefit comes uniquely from new geometry rather than extra capacity. The test intervals describe these three seeds and 11 test signers, not every future signer or dataset.
+
+Two further test observations temper this result. Fine-tuning alone (B) did not improve on the official weights, so the matched gain is measured against a baseline that is itself no better than the released model. A training-free mirror average also added more to the official checkpoint (+1.17 points) than geometry and retrieval added to B (+0.74). The simplest change was the most effective on test, although the two were never combined or compared from the same starting point.
 
 ### 4.2 Relation to prior work and unsuccessful directions
 
-Our work follows ASL Citizen's isolated dictionary-retrieval setting [1] and adapts the existing PoET recognizer [2,3]. The dataset paper reports roughly 63% recognition accuracy and 91% recall at ten on held-out test signers [1]. Those published test results cannot be ranked directly against our validation figures. Nor does reusing an official checkpoint reproduce the paper's entire training search, all datasets, or its online user study. The present contribution is a documented comparison and a small adaptation of an established system, not a new state-of-the-art claim.
+Our work follows ASL Citizen's isolated dictionary-retrieval setting [1] and adapts the existing PoET recognizer [2,3]. On the official test split, our official-checkpoint Top-1 of 73.56% matches the 73.54% reported for PoET [2] to within 0.02 points. The dataset paper reports roughly 63% recognition accuracy and 91% recall at ten on the same held-out test signers [1]. The PoET-based systems here exceed that figure largely because of PoET itself, not because of our modifications. Nor does reusing an official checkpoint reproduce the paper's entire training search, all datasets, or its online user study. The present contribution is a documented comparison and a small adaptation of an established system, not a new state-of-the-art claim.
 
-More elaborate additions were not automatically better. Attribute auxiliary supervision yielded only four additional correct clips initially and two after changing the new-head learning rate, relative to its matched baseline. A cross-signer supervised-contrastive experiment obtained 81.0850% against its matched classification control at 81.1141%. Extending matched B/G training to 20 epochs reduced the mean geometry advantage from 0.2879 to 0.2588 points. A later hand-RGB temporal fusion reached 81.8517% for one seed, only two clips above same-seed G+R at 81.8323%, while lowering the underlying G Top-5 from 96.5450% to 96.1277%. These results motivate retaining the simpler geometry/retrieval candidate rather than presenting complexity as evidence of progress.
+More elaborate additions were not automatically better. Attribute auxiliary supervision yielded only four additional correct clips initially and two after changing the new-head learning rate, relative to its matched baseline. A cross-signer supervised-contrastive experiment obtained 81.0850% against its matched classification control at 81.1141%. Extending matched B/G training to 20 epochs reduced the mean geometry advantage from 0.2879 to 0.2588 points. A later hand-RGB temporal fusion reached 81.8517% for one seed, only two clips above same-seed G+R at 81.8323%, while lowering the underlying G Top-5 from 96.5450% to 96.1277%. These results motivate retaining the simpler geometry/retrieval candidate rather than presenting complexity as evidence of progress. None of these exploratory variants was evaluated on test.
 
-### 4.3 Limitations and next evaluation
+### 4.3 Limitations and further work
 
-Repeated development on validation is the main limitation. Checkpoint selection, design revisions, and exploratory alternatives can favor this particular cohort; the first seed also informed tuning. A positive three-seed mean therefore does not establish statistical significance or an improvement on the reserved test split. The planned final evaluation should first freeze checkpoint choices, feature definitions, retrieval weights, and failure accounting, then evaluate the official test videos once under that protocol. Test errors must not become a new tuning set.
+Repeated development on validation was the main risk. Checkpoint selection, design revisions, and exploratory alternatives can favor the validation cohort, and the first seed also informed tuning. The one-shot test evaluation shows the size of this effect: the PoET systems and the SVM lose 7–8 points from validation to test, while the matched G+R gain persists. The test split has now been used once and will not be used again. Any further change, such as combining mirror TTA with G+R, can only be developed and reported on validation, and must be labeled as a validation result. Three seeds and 11 test signers remain a small basis for uncertainty estimates.
+
+<!-- BEGIN SOLUTION results-2026-10 -->
+The classical follow-ups add two limitations. Hand normalization decides per signer from that signer's unlabeled clips, so it assumes a known signer with several clips. It does not leak labels, but it is a signer-level adaptation, and its use on a single uploaded clip was not evaluated. The tuned settings were selected on validation; the single test evaluation confirms their gains, but it does not show that the selected values are optimal. The tuned forest's 37 GB training memory also makes it impractical without a large machine.
+<!-- END SOLUTION -->
+
 
 Generalization beyond ASL Citizen is also unmeasured. The vocabulary is closed, word boundaries are supplied, and arbitrary uploads may differ in framing, signing style, or label coverage. The current system always returns candidates rather than a validated unknown-sign decision. A useful future study would evaluate calibrated rejection and new signers under an agreed protocol. More targeted engineering questions include less conservative body masks and robust motion summaries, but they require new controlled comparisons. We have not completed a cost benchmark for every method under common hardware and measurement conditions, so isolated timing observations are not used to rank speed. Finally, mutual error rescue suggests potential complementarity; learning a selector would require separate development data and cannot be justified by choosing the correct model retrospectively.
 
 ## 5. Conclusion
 
-This project produces a reproducible comparison of four isolated ASL recognition systems and a controlled adaptation of PoET. On the complete ASL Citizen validation split, the official PoET checkpoint reaches 80.9394% Top-1, while the best fixed-descriptor baseline, linear SVM, reaches 38.7616%. Relative geometry and fixed retrieval increase matched fine-tuned PoET from 81.1853% to 81.7352% on average over three seeds. The gain is small, includes regressions, and remains a validation finding. Complete denominators, negative experiments, error overlap, and a working video interface provide evidence beyond a single favorable accuracy number.
+This project produces a reproducible comparison of four isolated ASL recognition systems and a controlled adaptation of PoET. On the complete validation split, the official PoET checkpoint reaches 80.94% Top-1 and the best original fixed-descriptor baseline, the linear SVM, reaches 38.76%. In the one-shot test evaluation they reach 73.56% and 30.93%. Relative geometry and fixed retrieval raise matched fine-tuned PoET from 81.19% to 81.74% on validation and from 73.45% to 74.18% on test, averaged over three seeds. The gain is small, positive for every seed, and includes regressions. A training-free mirror average of the official checkpoint gives the best test Top-1, 74.72%. Complete denominators, negative experiments, error overlap, and a working video interface provide evidence beyond a single favorable accuracy number.
 
-**Contribution statement for this version.** Xinjie Huang initiated and directed the implementation and experiment program, selected the project scope, and prepared this report with coding-agent and writing assistance. Agent-assisted work covered data preparation, model adapters, training and evaluation infrastructure, result verification, the demonstration, and analysis drafts under his supervision. Xinjie remains responsible for reviewing and explaining the submitted material. Duncan Stadler, Leyun Kim, and Ming Chen are confirmed project members, but their completed individual contributions have not yet been consolidated in this version. No baseline is attributed to them merely because a reference implementation exists. The final team contribution statement must record their actual work before submission; the project retains experiment and AI-use records for review.
+<!-- BEGIN SOLUTION results-2026-10 -->
+Follow-ups on the classical baselines show that left/right-hand normalization and bounded tuning raise the best classical test score to 42.52%, still 31 points below PoET. Swapping only the input to PoET's embedding closes most of the gap for kNN and the SVM. The representation, not the classifier, is the main difference between the classical systems and PoET.
+<!-- END SOLUTION -->
+
+**Contribution statement for this version.** Xinjie Huang initiated and directed the implementation and experiment program, selected the project scope, and prepared this report with coding-agent and writing assistance. Agent-assisted work covered data preparation, model adapters, training and evaluation infrastructure, result verification, the demonstration, and analysis drafts under his supervision. The October 10–12 follow-ups and the one-shot test evaluation belong to the same program. The November 5 update added their results to this report with agent assistance; it ran no new experiment. Xinjie remains responsible for reviewing and explaining the submitted material. Duncan Stadler, Leyun Kim, and Ming Chen will each re-implement and analyze one classical method; their method subsections and actual contributions are to be added from that work. No baseline is attributed to them merely because a reference implementation exists. The final team contribution statement must record their actual work before submission; the project retains experiment and AI-use records for review.
 
 ## References
 
