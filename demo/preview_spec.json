@@ -1,0 +1,85 @@
+{
+  "title": "Isolated ASL Word Recognition",
+  "subtitle": "Four systems, one sign at a time",
+  "course": "EN.601.661 Computer Vision",
+  "caption": "Selected validation examples · not an accuracy estimate",
+  "watermark": "STYLE PREVIEW · placeholder clips and labels",
+  "methods": [
+    {
+      "name": "kNN",
+      "note": "hand-crafted features"
+    },
+    {
+      "name": "Linear SVM",
+      "note": "hand-crafted features"
+    },
+    {
+      "name": "Random Forest",
+      "note": "hand-crafted features"
+    },
+    {
+      "name": "PoET",
+      "note": "pose transformer"
+    }
+  ],
+  "clips": [
+    {
+      "video": null,
+      "placeholder": "PLACEHOLDER CLIP 1",
+      "truth": "EXAMPLE A",
+      "predictions": [
+        "EXAMPLE A",
+        "EXAMPLE A",
+        "EXAMPLE A",
+        "EXAMPLE A"
+      ]
+    },
+    {
+      "video": null,
+      "placeholder": "PLACEHOLDER CLIP 2",
+      "truth": "EXAMPLE B",
+      "predictions": [
+        "EXAMPLE C",
+        "EXAMPLE B",
+        "EXAMPLE D",
+        "EXAMPLE E"
+      ]
+    },
+    {
+      "video": null,
+      "placeholder": "PLACEHOLDER CLIP 3",
+      "truth": "EXAMPLE C",
+      "predictions": [
+        "EXAMPLE F",
+        "EXAMPLE G",
+        "EXAMPLE F",
+        "EXAMPLE C"
+      ]
+    },
+    {
+      "video": null,
+      "placeholder": "PLACEHOLDER CLIP 4",
+      "truth": "EXAMPLE D",
+      "predictions": [
+        "EXAMPLE H",
+        "EXAMPLE A",
+        "EXAMPLE J",
+        "EXAMPLE K"
+      ]
+    }
+  ],
+  "summary": {
+    "title": "Final test results · Top-1 accuracy",
+    "subtitle": "ASL Citizen test split: 32,941 clips from 11 unseen signers, evaluated once",
+    "values": [
+      15.52,
+      30.93,
+      12.54,
+      73.56
+    ],
+    "footnotes": [
+      "kNN, Linear SVM and Random Forest: hand-crafted pose features, original settings. PoET: official pretrained checkpoint.",
+      "The clips shown before this card are selected validation examples, not part of this result."
+    ]
+  }
+}
