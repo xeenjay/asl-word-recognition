@@ -1,0 +1,264 @@
+{
+  "copied": "2026-11-19",
+  "note": "Verbatim copies; sha256 equals the research workspace file at copy time.",
+  "files": [
+    {
+      "path": "research/scripts/analyze_cls_representation.py",
+      "source": "research workspace: scripts/analyze_cls_representation.py",
+      "sha256": "905f6234d1db14bbf6ce5f69d3094529835a97504b6269b9b11a1cabe44dc2bf",
+      "bytes": 16577
+    },
+    {
+      "path": "research/scripts/analyze_final_test.py",
+      "source": "research workspace: scripts/analyze_final_test.py",
+      "sha256": "5120b380025a502e7b51605b34e26073d45551344df6bce7bcf18eb8749d15a2",
+      "bytes": 11600
+    },
+    {
+      "path": "research/scripts/analyze_handedness.py",
+      "source": "research workspace: scripts/analyze_handedness.py",
+      "sha256": "9532f121ac15ada6788056c462f45ce3b4e278a8521d80acb0d654105f3af263",
+      "bytes": 9194
+    },
+    {
+      "path": "research/scripts/analyze_poet_handedness.py",
+      "source": "research workspace: scripts/analyze_poet_handedness.py",
+      "sha256": "61a66f2739d411cf1d5ed235bd55fa73d7e400b203383495c82bfc8901ed71ad",
+      "bytes": 29076
+    },
+    {
+      "path": "research/scripts/analyze_poet_mirror_tta_fullval.py",
+      "source": "research workspace: scripts/analyze_poet_mirror_tta_fullval.py",
+      "sha256": "90889242026eaecc5f82140f416c6fe36d0ccd852bdf38edeffd2cc7d2325ca6",
+      "bytes": 25154
+    },
+    {
+      "path": "research/scripts/build_comparison_gallery.py",
+      "source": "research workspace: scripts/build_comparison_gallery.py",
+      "sha256": "39e1833dbd1ab677328fc8b7a77ba8aa18b33c300927046d8526405cbc7de651",
+      "bytes": 47816
+    },
+    {
+      "path": "research/scripts/contrastive_components.py",
+      "source": "research workspace: scripts/contrastive_components.py",
+      "sha256": "d8545ba292cef486fc44f726d0990393bd840b47e92cb3561dd58161e52695ff",
+      "bytes": 16162
+    },
+    {
+      "path": "research/scripts/evaluate_contrastive.py",
+      "source": "research workspace: scripts/evaluate_contrastive.py",
+      "sha256": "e34daa7df41f8f4c53e1846c8b67018792ff23b6e572623accea7f6f4671c232",
+      "bytes": 14024
+    },
+    {
+      "path": "research/scripts/evaluate_geometry_ablation.py",
+      "source": "research workspace: scripts/evaluate_geometry_ablation.py",
+      "sha256": "d34430423086f02f186ba5ebaa9065bf5d27b0ee8c762193f7e634dd4358958a",
+      "bytes": 23433
+    },
+    {
+      "path": "research/scripts/evaluate_handedness_query.py",
+      "source": "research workspace: scripts/evaluate_handedness_query.py",
+      "sha256": "72cb7e82a722d1de69116cc16b95680e4eaa86067972d5d0ca3f64935f984510",
+      "bytes": 8429
+    },
+    {
+      "path": "research/scripts/evaluate_poet_mirror.py",
+      "source": "research workspace: scripts/evaluate_poet_mirror.py",
+      "sha256": "e5dd3283f48d97c36c405124bafce15590f6d240b8a922a1cb7a0a809002d0b4",
+      "bytes": 15418
+    },
+    {
+      "path": "research/scripts/evaluate_poet_mirror_fullval.py",
+      "source": "research workspace: scripts/evaluate_poet_mirror_fullval.py",
+      "sha256": "27b61212e5e5a692e9fb84ec015b919c4743bb1fc142a5f3ce16bead8eba7d9a",
+      "bytes": 14089
+    },
+    {
+      "path": "research/scripts/fetch_asl_dataset.py",
+      "source": "research workspace: scripts/fetch_asl_dataset.py",
+      "sha256": "15afc77e7d309416580000ba3db5d113c1da44be6c675d3a66a83d3f72e2d0a5",
+      "bytes": 20671
+    },
+    {
+      "path": "research/scripts/fetch_asl_sample.py",
+      "source": "research workspace: scripts/fetch_asl_sample.py",
+      "sha256": "685aa928d8b943f4f43f87176f5068ce79ad2741e38bff8baa31840609c3defa",
+      "bytes": 17764
+    },
+    {
+      "path": "research/scripts/fetch_asl_test.py",
+      "source": "research workspace: scripts/fetch_asl_test.py",
+      "sha256": "e1d5424178d4aab906f84216808f066f36dae2295b93373735397a36e0709dd7",
+      "bytes": 6965
+    },
+    {
+      "path": "research/scripts/final_test_classical.py",
+      "source": "research workspace: scripts/final_test_classical.py",
+      "sha256": "a50c95658d5904e7368ecdca00e9febd4c38616d1caed8684b7927e3f2c7ce29",
+      "bytes": 10627
+    },
+    {
+      "path": "research/scripts/final_test_poet.py",
+      "source": "research workspace: scripts/final_test_poet.py",
+      "sha256": "4c0fdffc7e053da8af9c53386d1b118ee5d8f3274fcd615454bf9080103c219c",
+      "bytes": 17417
+    },
+    {
+      "path": "research/scripts/final_test_retrieval.py",
+      "source": "research workspace: scripts/final_test_retrieval.py",
+      "sha256": "5e071751ff585f25d0de6cb988f38341586acf45c2d336654ef8ad8f5c784cd3",
+      "bytes": 7024
+    },
+    {
+      "path": "research/scripts/finetune_contrastive.py",
+      "source": "research workspace: scripts/finetune_contrastive.py",
+      "sha256": "1eff1abcd6602da117d0d7b0a5d985c42d2ed1764a8d1e304a40c65d20c07791",
+      "bytes": 31915
+    },
+    {
+      "path": "research/scripts/infer_comparison.py",
+      "source": "research workspace: scripts/infer_comparison.py",
+      "sha256": "0c374fbc919ac37a6ec66f5ea62862648d3ae12a78b7bfc4115682e149b82872",
+      "bytes": 23704
+    },
+    {
+      "path": "research/scripts/prepare_cls_representation_dataset.py",
+      "source": "research workspace: scripts/prepare_cls_representation_dataset.py",
+      "sha256": "713f9a37c1995631876159bca2505c8f5bf8ae7c1879a18cf77486e9f80a6fcc",
+      "bytes": 17044
+    },
+    {
+      "path": "research/scripts/prepare_handedness_dataset.py",
+      "source": "research workspace: scripts/prepare_handedness_dataset.py",
+      "sha256": "80e0082c81c06e808c3a0e4d8335740fb96f4ed003697e27097f6d6b037c8a45",
+      "bytes": 10959
+    },
+    {
+      "path": "research/scripts/prepare_poet_mirror_cache.py",
+      "source": "research workspace: scripts/prepare_poet_mirror_cache.py",
+      "sha256": "6e78b9ac5110b0a585cd3895021cd4a1728e3b46f60ac5122f45e28eb1d5ce07",
+      "bytes": 26553
+    },
+    {
+      "path": "research/scripts/prepare_poet_mirror_fullval.py",
+      "source": "research workspace: scripts/prepare_poet_mirror_fullval.py",
+      "sha256": "c239876d831fbefc048babb8d0b06926539b216fcc17921edd738274781d5bb7",
+      "bytes": 21411
+    },
+    {
+      "path": "research/scripts/prepare_test_poses.py",
+      "source": "research workspace: scripts/prepare_test_poses.py",
+      "sha256": "d7c5a5eb742d34b1fac1bab320e0c0628571bbed6727efd1d110adedecc51490",
+      "bytes": 11359
+    },
+    {
+      "path": "research/scripts/replay_cls_official_head.py",
+      "source": "research workspace: scripts/replay_cls_official_head.py",
+      "sha256": "5716eef8ccfb53f39d7bc4b34acafbb83fada98446653e3efb1bb77ff447c665",
+      "bytes": 10660
+    },
+    {
+      "path": "research/scripts/run_classical_tuning.py",
+      "source": "research workspace: scripts/run_classical_tuning.py",
+      "sha256": "3a57bbaba00f2c94072b3cfd763c71c0beef6295212c5ad7fa21b78ed8e76816",
+      "bytes": 25908
+    },
+    {
+      "path": "research/scripts/serve_comparison_demo.py",
+      "source": "research workspace: scripts/serve_comparison_demo.py",
+      "sha256": "5814ca45f84fa5d66d65219e96f62a681dcba31275e3467e3762edb706cccafc",
+      "bytes": 12325
+    },
+    {
+      "path": "research/docs/tools/analyze_contrastive_trial.py",
+      "source": "research workspace: docs/tools/analyze_contrastive_trial.py",
+      "sha256": "4ae2773879e6c978fc13a5f92f0f3f71eb4c0aa4c8f278a76ca9ebc550d07420",
+      "bytes": 8166
+    },
+    {
+      "path": "research/docs/tools/analyze_extended_training.py",
+      "source": "research workspace: docs/tools/analyze_extended_training.py",
+      "sha256": "e2df758f60e1396bcfe3ec1daaa274cfb0e4ead78eb35e4f363333c64575e03b",
+      "bytes": 31133
+    },
+    {
+      "path": "research/docs/tools/analyze_factorial_retrieval.py",
+      "source": "research workspace: docs/tools/analyze_factorial_retrieval.py",
+      "sha256": "209177ac67f4650b1db425e9fd9ac8c777c5561aabc8185cf08aaa2f18a2e2ce",
+      "bytes": 31603
+    },
+    {
+      "path": "research/docs/tools/analyze_geometry_ablation.py",
+      "source": "research workspace: docs/tools/analyze_geometry_ablation.py",
+      "sha256": "36a626d57c78835887a0dee98522fa3d3488d324d5059bc21a2762deb35f9c89",
+      "bytes": 20524
+    },
+    {
+      "path": "research/docs/tools/analyze_paired_seeds.py",
+      "source": "research workspace: docs/tools/analyze_paired_seeds.py",
+      "sha256": "35f3d6d3357902f2ad5a5d3f2fa38a10dca709929ac747cebfcd8277b83e8812",
+      "bytes": 14481
+    },
+    {
+      "path": "research/docs/tools/analyze_retrieval_pilot.py",
+      "source": "research workspace: docs/tools/analyze_retrieval_pilot.py",
+      "sha256": "1e6919990020a6619111c1b2378deddb98fde3f79dd7de09789da42e87759435",
+      "bytes": 17893
+    },
+    {
+      "path": "research/docs/tools/reanalyze_submission_20261010.py",
+      "source": "research workspace: docs/tools/reanalyze_submission_20261010.py",
+      "sha256": "7681d40c9103c9de4410d3eabed121a3df1b8293f13bf9a290b8dacd8f2e5410",
+      "bytes": 20269
+    },
+    {
+      "path": "research/docs/tools/run_contrastive_lane.py",
+      "source": "research workspace: docs/tools/run_contrastive_lane.py",
+      "sha256": "b311231cb3994db4b2d353d9db89e2ea954f2ef5c59f37194aff9b7c1bae8436",
+      "bytes": 29933
+    },
+    {
+      "path": "research/docs/tools/run_extended_training_lane.py",
+      "source": "research workspace: docs/tools/run_extended_training_lane.py",
+      "sha256": "c1d3b02be76ebc1d2349ecab86ae942f00ea5610b4346b8d2103444793830db4",
+      "bytes": 29958
+    },
+    {
+      "path": "research/docs/tools/run_paired_seed_lane.py",
+      "source": "research workspace: docs/tools/run_paired_seed_lane.py",
+      "sha256": "582315236227343f90dbfb5e89a9f8b3c5c67fa7b2411b896c8d777bfc7d44fb",
+      "bytes": 21136
+    },
+    {
+      "path": "research/docs/tools/run_rgb_pilot.py",
+      "source": "research workspace: docs/tools/run_rgb_pilot.py",
+      "sha256": "afd1732f4b7a3ade125f9d44109c20a88641f6565b6c57b9ebf38bb26cc3ed53",
+      "bytes": 22262
+    },
+    {
+      "path": "research/docs/submission-20261004/figures/build_figures.py",
+      "source": "research workspace: docs/submission-20261004/figures/build_figures.py",
+      "sha256": "e9a9cef98f76bfd7dca82489b40d21c6c159288341840565a38139cdb8b0398a",
+      "bytes": 18510
+    },
+    {
+      "path": "research/docs/comparison-demo/index.html",
+      "source": "research workspace: docs/comparison-demo/index.html",
+      "sha256": "a7921c5ceb21143157375f2404f30b76a35f13007712716e0b86d98ab40f043e",
+      "bytes": 12466
+    },
+    {
+      "path": "research/docs/comparison-demo/app.js",
+      "source": "research workspace: docs/comparison-demo/app.js",
+      "sha256": "eb739b14283795c07a7cc961e322d541a58fd5098701ce547a5c34b3e340655b",
+      "bytes": 37757
+    },
+    {
+      "path": "research/docs/comparison-demo/style.css",
+      "source": "research workspace: docs/comparison-demo/style.css",
+      "sha256": "01a185bdae1d0e1a82ab8a6273f06d4fabc49d18f6c6798d3ee97346f986665f",
+      "bytes": 25197
+    }
+  ]
+}

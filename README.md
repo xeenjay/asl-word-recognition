@@ -70,6 +70,7 @@ Every run needs a **new output directory**. Compare `metrics.json`, `per_class.j
 | Find the runner and reference implementation | [Code map](docs/CODE_MAP.md) |
 | Understand features and algorithms | [Methods](docs/METHODS.md) |
 | Read the research | [English report](reports/report-en.md), [Chinese report](reports/report-zh.md), [Results](docs/RESULTS.md) |
+| Find the code behind a report section | [Report → code map](docs/REPORT_CODE_MAP.md); remaining research code in [research/](research/README.md) |
 | Check completion and acceptance status | [Status](docs/STATUS.md) |
 
 The runner fits the scaler on training rows only and gives standardized features to the classifier. Do not fit preprocessing on validation or remove difficult examples to improve accuracy.

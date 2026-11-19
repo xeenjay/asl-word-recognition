@@ -66,7 +66,7 @@ These files explain the completed research. They are not prerequisites for imple
 | Local command records | `run_logged.py` | Wrap an explicit local command; separate from the teaching runner's own records |
 | Synthetic mechanics | `quickstart_classical.py` | Invented trajectories; no dataset download and no ASL recognition claim |
 
-Use [Third-party sources](THIRD_PARTY.md) and [Experiment protocol](EXPERIMENT_PROTOCOL.md) for advanced work. The original full research runner has different input contracts and parallelism from the one-worker teaching runner.
+The final test, mirror TTA, bounded tuning, representation swap, demo and the other experiments the report cites are in [research/](../research/README.md); [Report → code map](REPORT_CODE_MAP.md) lists them by report section. Use [Third-party sources](THIRD_PARTY.md) and [Experiment protocol](EXPERIMENT_PROTOCOL.md) for advanced work. The original full research runner has different input contracts and parallelism from the one-worker teaching runner.
 
 ## Tests and common mistakes
 

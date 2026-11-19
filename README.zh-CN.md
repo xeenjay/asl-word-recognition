@@ -72,6 +72,7 @@ PoET 内部三 seed 对照另列：微调 B **81.1853%** → G+R **81.7352%**，
 
 - 特征和算法：[Methods](docs/METHODS.md)。
 - 完整分析：[英文报告](reports/report-en.md)、[中文报告](reports/report-zh.md)、[Results](docs/RESULTS.md)。
+- 报告每一节对应的代码：[Report → code map](docs/REPORT_CODE_MAP.md)；其余研究代码在 [research/](research/README.md)。
 - 已完成、待完成及验收：[Status](docs/STATUS.md)。
 - 记录本人实际工作：[Team guide](docs/TEAM_GUIDE.md)、[AI 使用记录](docs/AI_USE_AND_CONTRIBUTIONS.md)。
 

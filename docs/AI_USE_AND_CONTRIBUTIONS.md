@@ -93,3 +93,13 @@ October 10 figure that the caption describes. The repository notes were updated
 because members now have read access here. No experiment, training run, or test
 evaluation was performed. The contribution statement still marks which member
 takes Linear SVM and which takes Random Forest as to be confirmed.
+
+## Research code added — November 19, 2026
+
+At Xinjie's request, an agent (Claude) copied the remaining code behind the
+report and slides from the research workspace into `research/`, unchanged, with
+a SHA-256 manifest, and wrote `docs/REPORT_CODE_MAP.md`. The rule was: code for
+everything the report or slides cite goes in; the hand-RGB branch was left out
+by Xinjie's choice; data, weights and media stay out under the dataset license.
+The copied code was written during the original research with agent assistance;
+copying it ran no experiment or test evaluation.

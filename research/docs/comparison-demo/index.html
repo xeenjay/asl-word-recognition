@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>ASL Lab · Methods, videos & error analysis</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="data.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#overview" data-i18n="skip">跳到内容</a>
+  <header class="site-header">
+    <a class="brand" href="#overview" aria-label="ASL Lab"><span class="brand-mark" aria-hidden="true">A<span>↗</span></span><span>ASL<span class="brand-light"> LAB</span></span></a>
+    <nav aria-label="Sections"><a href="#overview" data-i18n="navOverview">结果总览</a><a href="#explorer" data-i18n="navCases">视频实验室</a><a href="#analysis" data-i18n="navAnalysis">错误分析</a><a href="#methods" data-i18n="navMethods">方法原理</a></nav>
+    <div class="header-right"><span id="connection-pill" class="status-pill"><i></i><span data-i18n="offline">离线回放</span></span><button type="button" class="language-button" id="language-toggle" aria-label="Switch to English">EN ↗</button></div>
+  </header>
+  <main>
+    <section class="hero section-wrap" id="overview">
+      <div class="eyebrow">COMPUTER VISION · ASL CITIZEN</div>
+      <div class="hero-grid"><div><h1 data-i18n="heroTitle">一个手语词，<br><span>四种识别思路。</span></h1><p class="hero-lead" data-i18n="heroLead">从真实视频出发，比较传统分类器与 PoET：看结果，也看它们在哪里出错。</p><div class="hero-tags"><span data-i18n="tagTask">孤立词识别</span><span data-i18n="tagSplit">官方 signer-disjoint 划分</span><span class="validation-tag" data-i18n="tagValidation">图表：VALIDATION 结果</span></div></div><div class="task-card"><span class="mini-label" data-i18n="taskLabel">我们的任务</span><div class="task-flow"><div class="clip-icon" aria-hidden="true">▶</div><span class="flow-arrow">→</span><div class="word-icon">WORD</div></div><p data-i18n="taskText">一段已分好的 ASL 词级视频<br>→ 2,731 个词中的一个标签</p><small data-i18n="taskBoundary">当前系统不做连续句子切分或英文句子翻译。</small></div></div>
+      <div class="dataset-strip"><div><strong>40,154</strong><span data-i18n="trainStat">训练视频 · 拟合 / 建库</span></div><div><strong>10,304</strong><span data-i18n="valStat">验证视频 · 本页图表指标</span></div><div><strong>2,731</strong><span data-i18n="classStat">词类别 · 统一词表</span></div><div class="test-stat"><strong>32,941</strong><span data-i18n="testStat">测试视频 · 10-12 已完成最终评价</span></div></div>
+    </section>
+
+    <section class="section-wrap section-block results-section" aria-labelledby="results-title">
+      <div class="section-heading"><div><div class="eyebrow">01 / BENCHMARK</div><h2 id="results-title" data-i18n="resultsTitle">同一任务，结果有什么不同？</h2></div><div class="segmented" role="group" aria-label="Metric"><button type="button" class="active" data-metric="top1" aria-pressed="true">Top-1</button><button type="button" data-metric="top5" aria-pressed="false">Top-5</button></div></div>
+      <div class="results-layout"><div class="panel chart-panel"><div class="chart-title"><span id="metric-description"></span><span class="muted" data-i18n="chartDenominator">全部 10,304 段验证视频</span></div><div id="benchmark-chart" class="benchmark-chart"></div><div class="axis"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div></div><aside class="panel reading-card"><span class="mini-label" data-i18n="interpretLabel">如何解释</span><h3 data-i18n="interpretTitle">表示方式，也是差距的一部分。</h3><p data-i18n="interpretText">三个传统方法共享 1,020 维姿态 / 运动摘要。PoET 学习时序表示，并使用官方预训练权重。因此，这不是只替换分类器的严格消融实验。</p><p class="note" data-i18n="interpretLimit">这些分数描述当前实现与预算，不能推论所有 SVM 或随机森林都不适合手语。</p></aside></div>
+      <div class="evidence-line"><span class="evidence-dot"></span><span data-i18n="evidenceText">统一词表、官方划分、完整分母；train 拟合与建库，validation 用于开发和选模型，所以图中分数偏乐观。方法冻结后，test 于 10-12 只评价一次，同样四个模型的 test Top-1：kNN 15.52%、Linear SVM 30.93%、RF 12.54%、PoET 73.56%。最终报告中更强的变体（左右手统一＋调参的 SVM 42.52%、PoET 镜像 TTA 74.72%）没有接入本页。</span></div>
+    </section>
+
+    <section class="section-wrap section-block" id="explorer" aria-labelledby="explorer-title">
+      <div class="section-heading"><div><div class="eyebrow">02 / VIDEO EXPLORER</div><h2 id="explorer-title" data-i18n="explorerTitle">打开一个视频，逐个看预测。</h2><p class="section-intro" data-i18n="explorerIntro">既看成功，也看共同失败与方法分歧。案例经过有目的地选取，不代表随机样本的成功率。</p></div></div>
+      <div class="explorer-toolbar"><div class="filter-field"><label for="case-filter" data-i18n="filterLabel">案例类型</label><select id="case-filter"></select></div><div class="filter-field grow"><label for="case-select" data-i18n="caseLabel">选择视频</label><select id="case-select"></select></div><div class="case-step"><button type="button" id="previous-case" aria-label="Previous case">←</button><span id="case-position"></span><button type="button" id="next-case" aria-label="Next case">→</button></div></div>
+      <div class="explorer-grid"><div class="video-column"><div class="video-media"><div class="video-stage"><video id="case-video" controls playsinline preload="metadata" aria-label="ASL video"></video><div class="video-placeholder" id="video-placeholder" data-i18n="noVideo">此案例暂未提供视频。</div></div><div class="frame-strip" id="frame-strip"></div></div><div class="video-caption"><div><span class="mini-label" id="truth-caption" data-i18n="groundTruth">数据集标签</span><strong id="ground-truth">—</strong></div><span id="case-source" class="small-badge">VALIDATION</span></div><div id="case-observations" class="case-observations"></div><div class="run-actions"><button type="button" id="run-case" class="primary-button" disabled data-i18n="runCase">重新识别这个视频 ↗</button><button type="button" id="upload-trigger" class="secondary-button" disabled data-i18n="uploadVideo">上传词级视频</button><input type="file" id="upload-file" accept="video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov" hidden></div><p class="upload-note" data-i18n="uploadNote">实时识别需要连接演示服务。上传限 25 MB、30 秒；请使用单个词的视频。</p></div><div class="prediction-column"><div class="prediction-heading"><h3 data-i18n="predictionsTitle">候选词 · Top-5</h3><span class="source-badge" id="prediction-source" data-i18n="savedPredictions">已保存的预测</span></div><p class="score-caution" data-i18n="scoreCaution">各方法分数含义不同，不能横向当作置信度比较。</p><div id="predictions" class="prediction-grid"></div></div></div>
+      <div id="job-status" class="job-status" role="status" aria-live="polite" hidden></div><div id="live-details" class="live-details" hidden></div>
+    </section>
+
+    <section class="analysis-background" id="analysis"><div class="section-wrap section-block">
+      <div class="section-heading"><div><div class="eyebrow">03 / WHAT GOES WRONG</div><h2 data-i18n="analysisTitle">错误不只是一个百分比。</h2><p class="section-intro" data-i18n="analysisIntro">观察哪些样本被共同识别，哪些只被某一种方法识别，再提出可以验证的解释。</p></div></div>
+      <div class="analysis-grid"><article class="panel overlap-panel"><div class="card-heading"><h3 data-i18n="overlapTitle">两个方法，错误有多重叠？</h3></div><div class="pair-selectors"><label><span class="sr-only" data-i18n="methodA">方法 A</span><select id="pair-a"></select></label><span>×</span><label><span class="sr-only" data-i18n="methodB">方法 B</span><select id="pair-b"></select></label></div><div id="overlap-grid" class="overlap-grid"></div><p class="note" id="overlap-note"></p></article><article class="panel signer-panel"><div class="card-heading"><h3 data-i18n="signerTitle">不同 signer 的表现</h3><select id="signer-method" aria-label="Method for signer analysis"></select></div><div id="signer-chart"></div><p class="note" data-i18n="signerNote">这里的 6 位验证 signer 不在训练 signer 中。分组差异是观察结果，不足以单独证明原因。</p></article></div>
+      <article class="panel subgroup-panel"><div class="card-heading"><div><h3 data-i18n="groupsTitle">什么情况下更容易失败？</h3><p class="note" data-i18n="groupsNote">关键点缺失、时长与错误的关联不能直接解释为因果。每组样本数同时列出。</p></div><select id="group-dimension" aria-label="Diagnostic grouping"></select></div><div class="table-scroll"><table id="group-table"></table></div></article>
+      <div class="analysis-footnote"><strong data-i18n="analysisBoundaryTitle">证据的边界</strong><p data-i18n="analysisBoundary">案例里的手形相似、动作时序或遮挡只是可能解释；没有新增专家标注或因果实验。我们区分可复核的预测事实与待验证的机制假设。</p></div>
+    </div></section>
+
+    <section class="section-wrap section-block" id="methods" aria-labelledby="methods-title"><div class="section-heading"><div><div class="eyebrow">04 / UNDER THE HOOD</div><h2 id="methods-title" data-i18n="methodsTitle">四种方法，到底学了什么？</h2></div></div><div class="shared-pipeline"><span data-i18n="pipelineVideo">词级视频</span><b>→</b><span data-i18n="pipelinePose">MediaPipe 关键点</span><b>→</b><div><span data-i18n="pipelineFixed">固定摘要 → kNN / SVM / RF</span><span data-i18n="pipelineLearned">时序表示 → PoET</span></div></div><div id="method-cards" class="method-cards"></div><p class="implementation-note" data-i18n="implementationNote">实现来源：MediaPipe 与 PoET 使用已有模型；SVM / RF 调用 scikit-learn；kNN 使用项目封装的标准余弦搜索与投票。我们的工作包括特征设计、数据与词表适配、统一评价和分析。</p></section>
+
+    <section class="section-wrap section-block" id="improvement"><div class="improvement-panel"><div class="improvement-copy"><div class="eyebrow">05 / OUR POET EXTENSION</div><h2 data-i18n="improvementTitle">小幅改进，<br>也需要公平比较。</h2><p data-i18n="improvementText">相对几何（G）补充手与身体的空间关系；检索（R）使用训练集的 PoET 表示，对原始 Top-5 重新排序。</p><div class="gain"><strong>+0.55<span> pp</span></strong><p data-i18n="gainText">相对同预算微调 PoET<br>三个 seed 的平均 Top-1 增益（validation）</p></div></div><div class="ablation-side"><div id="ablation-table"></div><div class="improvement-notes"><p data-i18n="ablationNote">B 是匹配预算的微调基线，不是上方四方法比较的官方 PoET。这里只比较已有的三 seed 验证实验。</p><p data-i18n="ablationCaution">G+R 仍会把原来正确的例子改错。上面是 validation 结果；方法冻结后的 test 上，G+R 三 seed 平均 74.18%，比 B 的 73.45% 高 0.74 个百分点，三个 seed 方向一致，seed 与 signer 两种 95% 区间都不含 0。</p></div></div></div></section>
+    <footer class="section-wrap"><div><span class="footer-brand">ASL LAB</span><p data-i18n="footerScope">ASL Citizen · 孤立词识别与方法比较</p></div><div class="footer-links"><a href="analysis.json" download data-i18n="downloadData">下载分析数据 ↗</a><a href="METHODS_AND_ERRORS.md" data-i18n="readReport">阅读分析报告 ↗</a></div><p class="footer-note" data-i18n="footerNote">页面可离线回放已保存的预测。只有成功连接演示服务并提交视频后，才会执行新的模型推理。</p></footer>
+  </main>
+  <noscript><p class="noscript">请启用 JavaScript 查看案例与图表。Please enable JavaScript to explore results.</p></noscript>
+</body>
+</html>
