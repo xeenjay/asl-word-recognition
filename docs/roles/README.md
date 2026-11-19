@@ -2,6 +2,8 @@
 
 [Home](../../README.md) · [Member 1 — kNN](member1-knn.md) · [Member 2 — Linear SVM](member2-linear-svm.md) · [Member 3 — Random Forest](member3-random-forest.md)
 
+> **Update, November 19, 2026.** The plan has changed: Xinjie writes the final report, and each member's job now is to understand their method well enough to answer questions on it, help make the slides, and prepare the presentation. Finishing the TODOs is optional. The current plan and dates are in the team chat; the schedule below is the original one.
+
 The project compares three classical classifiers on hand-crafted pose/motion features with PoET, a pose transformer. Xinjie owns PoET, the shared data pipeline and integration. Each of the other three members owns **one classical method from start to finish**:
 
 | Role | Method | Code you write | Self-check |

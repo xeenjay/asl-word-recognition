@@ -80,3 +80,16 @@ training run, or test evaluation was performed for this update. The classical
 follow-up results stay hidden in the teaching version until they are released.
 The members' method subsections were not written for them, and Xinjie still has
 to review the updated report before submission.
+
+## Report update — November 19, 2026
+
+At Xinjie's request, an agent (Claude) replaced `reports/report-en.md` and
+`reports/report-zh.md` with the November 15 version that matches the PDF
+shared with the team. That version restores the October 10 analysis (selection
+effects, handedness diagnosis, paired statistics) alongside the final test
+results, and corrects several statements (forest memory, kNN p-values, TTA
+definition). `reports/figures/fig01_method_comparison.png` was replaced with the
+October 10 figure that the caption describes. The repository notes were updated
+because members now have read access here. No experiment, training run, or test
+evaluation was performed. The contribution statement still marks which member
+takes Linear SVM and which takes Random Forest as to be confirmed.

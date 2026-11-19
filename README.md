@@ -9,7 +9,7 @@ The three classical methods — **kNN**, **Linear SVM**, and **Random Forest** �
 **Start here: [Member tasks](docs/roles/README.md)** — what each role learns, writes, tests, investigates, and reports, with a suggested schedule.
 
 <!-- BEGIN SOLUTION instructor -->
-> **Answer-key repository (Xinjie only).** This is `xeenjay/asl-word-recognition`, which contains the answers. Members use the generated teaching repository `asl-word-recognition-team`; see [teaching/README.md](teaching/README.md). Do not invite members here.
+> **Answer-key repository (Xinjie only).** This is `xeenjay/asl-word-recognition`, which contains the answers. Members use the generated teaching repository `asl-word-recognition-team`; see [teaching/README.md](teaching/README.md). Since November 19, 2026, members also have read access here (Xinjie's decision) so they can study the finished code; their own work still goes through their own branches or files.
 <!-- END SOLUTION -->
 
 ## Quick start
